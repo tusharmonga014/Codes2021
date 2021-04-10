@@ -36,17 +36,21 @@ public class voidtype {
         // int arr1[] = { 10, 20, 30, 40, 50, 60, 70 };
         // combiDivideDiffSetsBasisOfSum(arr1, 0, 0, 0, "", "");
 
-        int sr = 0;
-        int sc = 0;
-        int er = 3;
-        int ec = 3;
-        String ans = "";
+        // int sr = 0;
+        // int sc = 0;
+        // int er = 3;
+        // int ec = 3;
+        // String ans = "";
 
         // mazepathHVD(sr, sc, er, ec, ans);
         // mazepathMultiMoves(sr, sc, er, ec, ans);
 
-        boolean board[][] = new boolean[4][4];
-        floodfill(board, sr, sc, er, ec, ans);
+        // boolean board[][] = new boolean[4][4];
+        // floodfill(board, sr, sc, er, ec, ans);
+
+        // paintBucket();
+
+        KnightTOUR();
     }
 
     public static void subseq(String str, String ans) {
@@ -396,4 +400,80 @@ public class voidtype {
         }
     }
 
+    public static int color;
+
+    public static void paintBucket() {
+        int[][] screen = { { 1, 1, 1, 2 }, { 2, 2, 2, 1 }, { 1, 2, 1, 1 }, { 1, 3, 1, 2 } };
+
+        color = 2;
+        paintbucket(screen, 1, 1, 3);
+
+        for (int arr[] : screen) {
+            for (int ele : arr) {
+                System.out.print(ele + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static int paintD[][] = { { -1, 0 }, { 0, 1 }, { 1, 0 }, { 0, -1 } };
+
+    public static void paintbucket(int[][] image, int sr, int sc, int newColor) {
+        image[sr][sc] = newColor;
+        for (int i = 0; i < 4; i++) {
+            if (sr + paintD[i][0] >= 0 && sc + paintD[i][1] >= 0 && sr + paintD[i][0] < image.length
+                    && sc + paintD[i][1] < image[0].length && image[sr + paintD[i][0]][sc + paintD[i][1]] == color) {
+                paintbucket(image, sr + paintD[i][0], sc + paintD[i][1], newColor);
+            }
+        }
+        return;
+    }
+
+    public static void dispBoard(int board[][]) {
+        for (int row[] : board) {
+            for (int ele : row)
+                System.out.print(ele + " ");
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static void KnightTOUR(){
+        int board[][] = new int[6][6];
+        int ksf = 1;
+        for(int i = 0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++)
+            {
+                board[i][j]=1;
+                knightTour(board, ksf, i, j);
+                board[i][j]=0;
+            }
+        }
+    }
+
+    public static int dKnight[][] = { { -2, 1 }, { -1, 2 }, { 1, 2 }, { 2, 1 }, { 2, -1 }, { 1, -2 }, { -1, -2 },
+            { -2, -1 } };
+
+    public static boolean isSafeForKnight(int board[][], int x, int y) {
+        if (x >= 0 && y >= 0 && x < board.length && y < board[0].length && board[x][y] == 0)
+            return true;
+        return false;
+    }
+
+    public static void knightTour(int board[][], int ksf, int x, int y) {
+        if (ksf == (board.length * board[0].length)) {
+            dispBoard(board);
+            return;
+        }
+
+        for (int i = 0; i < dKnight.length; i++) {
+            int nextX = x + dKnight[i][0];
+            int nextY = y + dKnight[i][1];
+            if (isSafeForKnight(board, nextX, nextY)) {
+                board[nextX][nextY] = ksf + 1; // as it stores move no.
+                knightTour(board, ksf + 1, nextX, nextY);
+                board[nextX][nextY] = 0;
+            }
+        }
+    }
 }
