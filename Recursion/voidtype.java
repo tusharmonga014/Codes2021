@@ -48,9 +48,31 @@ public class voidtype {
         // boolean board[][] = new boolean[4][4];
         // floodfill(board, sr, sc, er, ec, ans);
 
-        // paintBucket();
+        // paintBucket(); // also check if color != new color (or using boolean vis[][])
+        // else infinite calls.
 
-        KnightTOUR();
+        // KnightTOUR();
+
+        boolean box[] = new boolean[5];
+        int qpsf = 0;
+        int tnq = 4;
+        String ans = "";
+        int n = 4;
+        int m = 4;
+        int idx = 0;
+        boolean board[][] = new boolean[4][4];
+        // System.out.println(queen1D_Permutation(box, qpsf, tnq, ans));
+        // queen1D_Combination(n, tnq, idx, ans);
+        // System.out.println(queen1D_Permutation_Subseq(box, tnq, qpsf, idx, ans));
+        // queen1D_Combination_Subseq(n, tnq, idx, ans);
+        // queen2D_Permutation(board, tnq, qpsf, ans);
+        // queen2D_Combination(n, m, tnq, idx, ans);
+        // nQueens_combination(board, tnq, idx, ans);
+        // nQueens_permutation(board, tnq, qpsf, ans);
+        int r = 0;
+        // nQueensOptimized_01(board, tnq, qpsf, r, ans);
+        // nQueensOptimized_02(n, m, r, 0, 0, 0, tnq, ans);
+        nQueensOptimizedPermutation_02(n, m, 0, 0, 0, 0, tnq, qpsf, ans);
     }
 
     public static void subseq(String str, String ans) {
@@ -403,10 +425,13 @@ public class voidtype {
     public static int color;
 
     public static void paintBucket() {
-        int[][] screen = { { 1, 1, 1, 2 }, { 2, 2, 2, 1 }, { 1, 2, 1, 1 }, { 1, 3, 1, 2 } };
+        int[][] screen = { { 1, 1, 1, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1, 1, 0, 0 }, { 1, 0, 0, 1, 1, 0, 1, 1 },
+                { 1, 2, 2, 2, 2, 0, 1, 0 }, { 1, 1, 1, 2, 2, 0, 1, 0 }, { 1, 1, 1, 2, 2, 2, 2, 0 },
+                { 1, 1, 1, 1, 1, 2, 1, 1 }, { 1, 1, 1, 1, 1, 2, 2, 1 } };
 
         color = 2;
-        paintbucket(screen, 1, 1, 3);
+        if (color != newColor) // ** V.IMPORTANT **
+            paintbucket(screen, 4, 4, 3);
 
         for (int arr[] : screen) {
             for (int ele : arr) {
@@ -421,9 +446,9 @@ public class voidtype {
     public static void paintbucket(int[][] image, int sr, int sc, int newColor) {
         image[sr][sc] = newColor;
         for (int i = 0; i < 4; i++) {
-            if (sr + paintD[i][0] >= 0 && sc + paintD[i][1] >= 0 && sr + paintD[i][0] < image.length
-                    && sc + paintD[i][1] < image[0].length && image[sr + paintD[i][0]][sc + paintD[i][1]] == color) {
-                paintbucket(image, sr + paintD[i][0], sc + paintD[i][1], newColor);
+            if (sr + d[i][0] >= 0 && sc + d[i][1] >= 0 && sr + d[i][0] < image.length && sc + d[i][1] < image[0].length
+                    && image[sr + d[i][0]][sc + d[i][1]] == color && !board[sr + d[i][0]][sc + d[i][1]]) {
+                paintbucket(image, sr + d[i][0], sc + d[i][1], newColor);
             }
         }
         return;
@@ -438,15 +463,14 @@ public class voidtype {
         System.out.println();
     }
 
-    public static void KnightTOUR(){
+    public static void KnightTOUR() {
         int board[][] = new int[6][6];
         int ksf = 1;
-        for(int i = 0;i<board.length;i++){
-            for(int j=0;j<board[0].length;j++)
-            {
-                board[i][j]=1;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                board[i][j] = 1;
                 knightTour(board, ksf, i, j);
-                board[i][j]=0;
+                board[i][j] = 0;
             }
         }
     }
@@ -476,4 +500,237 @@ public class voidtype {
             }
         }
     }
+
+    public static int queen1D_Permutation(boolean[] box, int qpsf, int tnq, String ans) {
+        if (tnq == qpsf) {
+            if (tnq == qpsf)
+                System.out.println(ans);
+            /*
+             * // see last output line of this function to see its current pattern. if want
+             * to print in like manner B1Q1 B2Q2 B3Q3 . . . B3Q3 B4Q4 B5Q5 then take int
+             * arr[] and not boolean array, because queen no is inserted in ans while
+             * calling, but for peinting in this manner we will have to put that in array,
+             * and that wll work as a check also.
+             */
+            return 1;
+        }
+
+        int count = 0;
+
+        for (int i = 0; i < box.length; i++) {
+            if (!box[i]) {
+                box[i] = true;
+                count += queen1D_Permutation(box, qpsf + 1, tnq, ans + "B" + i + "q" + qpsf + " ");
+                box[i] = false;
+            }
+        }
+
+        return count;
+    }
+
+    public static void queen1D_Combination(int n, int tnq, int qpsf, int idx, String ans) {
+        if (tnq == qpsf) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = idx; i < n; i++) {
+            queen1D_Combination(n, tnq, qpsf + 1, i + 1, ans + "B" + i + " ");
+        }
+    }
+
+    public static int queen1D_Permutation_Subseq(boolean box[], int tnq, int qpsf, int idx, String ans) {
+        if (tnq == qpsf || idx == box.length) {
+            if (tnq == qpsf) {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+        if (!box[idx]) {
+            box[idx] = true;
+            count += queen1D_Permutation_Subseq(box, tnq, qpsf + 1, 0, ans + "B" + idx + "q" + qpsf);
+            box[idx] = false;
+        }
+        count += queen1D_Permutation_Subseq(box, tnq, qpsf, idx + 1, ans);
+        return count;
+    }
+
+    public static void queen1D_Combination_Subseq(int n, int tnq, int idx, String ans) {
+        if (tnq == 0 || idx == n) {
+            if (tnq == 0)
+                System.out.println(ans);
+            return;
+        }
+
+        queen1D_Combination_Subseq(n, tnq - 1, idx + 1, ans + "B" + idx);
+        queen1D_Combination_Subseq(n, tnq - 1, idx + 1, ans);
+    }
+
+    public static void queen2D_Permutation(boolean board[][], int tnq, int qpsf, String ans) {
+        if (tnq == qpsf) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = 0; i < board.length * board[0].length; i++) {
+
+            int x = i / board[0].length;
+            int y = i % board[0].length;
+            if (!board[x][y]) {
+                board[x][y] = true;
+                queen2D_Permutation(board, tnq, qpsf + 1, ans + "B(" + x + "," + y + ")q" + qpsf + " ");
+                board[x][y] = false;
+            }
+        }
+    }
+
+    public static void queen2D_Combination(int n, int m, int tnq, int idx, String ans) {
+        if (tnq == 0) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = idx; i < n * m; i++) {
+            int x = i / m;
+            int y = i % m;
+            queen2D_Combination(n, m, tnq - 1, i + 1, ans + "B(" + x + "," + y + ")  ");
+        }
+    }
+
+    public static int dQueen[][] = { { 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 1, 0 },
+            { 1, -1 } };
+
+    // also for permutation So Checking in All 8 directions
+    public static boolean isSafeToPlace(boolean board[][], int i, int j) {
+        int n = board.length;
+        int m = board[0].length;
+
+        for (int d = 0; d < dQueen.length; d++) {
+            for (int r = 1; r < Math.max(n, m); r++) {
+                int x = i + (r * dQueen[d][0]);
+                int y = j + (r * dQueen[d][1]);
+                if (x < 0 || y < 0 || y == m || x == n)
+                    break;
+                if (board[x][y])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public static void nQueens_combination(boolean board[][], int tnq, int idx, String ans) {
+        if (tnq == 0) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = idx; i < board.length * board[0].length; i++) {
+            int x = i / board[0].length;
+            int y = i % board[0].length;
+            if (isSafeToPlace(board, x, y)) { // if that cell has already queen THIS CONDITION ONLY
+                                              // REQUIRED IN PERMUTATION
+                board[x][y] = true;
+                nQueens_combination(board, tnq - 1, i + 1, ans + "B(" + x + "," + y + ")");
+                board[x][y] = false;
+            }
+        }
+    }
+
+    public static void nQueens_permutation(boolean board[][], int tnq, int qpsf, String ans) {
+        if (tnq == qpsf) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = 0; i < board.length * board[0].length; i++) {
+            int x = i / board[0].length;
+            int y = i % board[0].length;
+            if (isSafeToPlace(board, x, y) && !board[x][y]) { // if that cell has already queen THIS CONDITION ONLY
+                // REQUIRED IN PERMUTATION
+                board[x][y] = true;
+                nQueens_permutation(board, tnq, qpsf + 1, ans + "B(" + x + "," + y + ")__Q" + qpsf + "   ");
+                board[x][y] = false;
+            }
+        }
+    }
+
+    public static void nQueensCombination_Optimized_01(boolean board[][], int tnq, int r, String ans) {
+        if (tnq == 0) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int c = 0; c < board[0].length; c++) {
+            if (isSafeToPlace(board, r, c)) {
+                board[r][c] = true;
+                nQueensCombination_Optimized_01(board, tnq - 1, r + 1, ans + "B(" + r + "," + c + ") ");
+                board[r][c] = false;
+            }
+        }
+    }
+
+    // Above Version not possible for permutations
+
+    // most optimized
+    public static void nQueensOptimized_02(int rowSize, int colSize, int r, int col, int diag, int adiag, int tnq,
+            String ans) {
+        if (tnq == 0 || r == rowSize) {
+            if (tnq == 0)
+                System.out.println(ans);
+            return;
+        }
+
+        for (int c = 0; c < colSize; c++)
+            if ((col & (1 << c)) == 0 && (diag & (1 << (r + c))) == 0
+                    && (adiag & (1 << (Math.max(rowSize, colSize) - 1 + r - c))) == 0) {
+
+                col ^= (1 << c);
+                diag ^= (1 << (r + c));
+                adiag ^= (1 << (Math.max(rowSize, colSize) - 1 + r - c));
+
+                nQueensOptimized_02(rowSize, colSize, r + 1, col, diag, adiag, tnq - 1,
+                        ans + "B(" + r + "," + c + ") ");
+
+                col ^= (1 << c);
+                diag ^= (1 << (r + c));
+                adiag ^= (1 << (Math.max(rowSize, colSize) - 1 + r - c));
+
+            }
+    }
+
+    public static void nQueensOptimizedPermutation_02(int rowSize, int colSize, int row, int col, int diag, int adiag,
+            int tnq, int qpsf, String ans) {
+        if (tnq == qpsf) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = 0; i < rowSize * colSize; i++) {
+            int r = i / colSize;
+            int c = i % colSize;
+            if ((row & (1 << r)) == 0 && (col & (1 << c)) == 0 && (diag & (1 << (r + c))) == 0
+                    && (adiag & (1 << (Math.max(rowSize, colSize) - 1 + r - c))) == 0) {
+
+                row ^= (1 << r);
+                col ^= (1 << c);
+                diag ^= (1 << (r + c));
+                adiag ^= (1 << (Math.max(rowSize, colSize) - 1 + r - c));
+
+                nQueensOptimizedPermutation_02(rowSize, colSize, row, col, diag, adiag, tnq, qpsf + 1,
+                        ans + "B(" + r + "," + c + ")_Q" + qpsf + "   ");
+
+                row ^= (1 << r);
+                col ^= (1 << c);
+                diag ^= (1 << (r + c));
+                adiag ^= (1 << (Math.max(rowSize, colSize) - 1 + r - c));
+
+            }
+        }
+    }
+
+    // ==================================================================================================
+
 }
