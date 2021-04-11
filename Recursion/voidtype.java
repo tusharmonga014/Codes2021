@@ -1,4 +1,4 @@
-// import java.util.ArrayList;
+import java.util.ArrayList;
 
 public class voidtype {
     public static void main(String[] args) {
@@ -53,14 +53,14 @@ public class voidtype {
 
         // KnightTOUR();
 
-        boolean box[] = new boolean[5];
-        int qpsf = 0;
-        int tnq = 4;
-        String ans = "";
-        int n = 4;
-        int m = 4;
-        int idx = 0;
-        boolean board[][] = new boolean[4][4];
+        // boolean box[] = new boolean[5];
+        // int qpsf = 0;
+        // int tnq = 4;
+        // String ans = "";
+        // int n = 4;
+        // int m = 4;
+        // int idx = 0;
+        // boolean board[][] = new boolean[4][4];
         // System.out.println(queen1D_Permutation(box, qpsf, tnq, ans));
         // queen1D_Combination(n, tnq, idx, ans);
         // System.out.println(queen1D_Permutation_Subseq(box, tnq, qpsf, idx, ans));
@@ -69,10 +69,12 @@ public class voidtype {
         // queen2D_Combination(n, m, tnq, idx, ans);
         // nQueens_combination(board, tnq, idx, ans);
         // nQueens_permutation(board, tnq, qpsf, ans);
-        int r = 0;
+        // int r = 0;
         // nQueensOptimized_01(board, tnq, qpsf, r, ans);
         // nQueensOptimized_02(n, m, r, 0, 0, 0, tnq, ans);
-        nQueensOptimizedPermutation_02(n, m, 0, 0, 0, 0, tnq, qpsf, ans);
+        // nQueensOptimizedPermutation_02(n, m, 0, 0, 0, 0, tnq, qpsf, ans);
+
+        Sudoku();
     }
 
     public static void subseq(String str, String ans) {
@@ -430,6 +432,7 @@ public class voidtype {
                 { 1, 1, 1, 1, 1, 2, 1, 1 }, { 1, 1, 1, 1, 1, 2, 2, 1 } };
 
         color = 2;
+        int newColor = 3;
         if (color != newColor) // ** V.IMPORTANT **
             paintbucket(screen, 4, 4, 3);
 
@@ -447,7 +450,7 @@ public class voidtype {
         image[sr][sc] = newColor;
         for (int i = 0; i < 4; i++) {
             if (sr + d[i][0] >= 0 && sc + d[i][1] >= 0 && sr + d[i][0] < image.length && sc + d[i][1] < image[0].length
-                    && image[sr + d[i][0]][sc + d[i][1]] == color && !board[sr + d[i][0]][sc + d[i][1]]) {
+                    && image[sr + d[i][0]][sc + d[i][1]] == color) {
                 paintbucket(image, sr + d[i][0], sc + d[i][1], newColor);
             }
         }
@@ -733,7 +736,70 @@ public class voidtype {
 
     // ==================================================================================================
 
-    public static void Sudoku(){
-        int board[][]={}
+    public static void Sudoku() {
+        int board[][] = { { 0, 0, 6, 0, 0, 8, 0, 0, 0 }, { 5, 2, 0, 0, 0, 0, 0, 0, 0 }, { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
+                { 0, 0, 3, 0, 1, 0, 0, 8, 0 }, { 9, 0, 0, 8, 6, 3, 0, 0, 5 }, { 0, 5, 0, 0, 9, 0, 6, 0, 0 },
+                { 1, 3, 0, 0, 0, 0, 2, 5, 0 }, { 0, 0, 0, 0, 0, 0, 0, 7, 4 }, { 0, 0, 5, 2, 0, 6, 3, 0, 0 } };
+
+        int row[] = new int[9];
+        int col[] = new int[9];
+        int mat[][] = new int[3][3];
+        ArrayList<Integer> empty = new ArrayList<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == 0) {
+                    empty.add((i * 9) + j);
+                } else {
+                    row[i] |= (1 << board[i][j]);
+                    col[j] |= (1 << board[i][j]);
+                    mat[i / 3][j / 3] |= (1 << board[i][j]);
+                }
+            }
+        }
+
+        sudokuSolver(board, row, col, mat, empty, 0);
+    }
+
+    public static void displayBoard(int board[][]) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static boolean sudokuSolver(int board[][], int[] row, int[] col, int mat[][], ArrayList<Integer> empty,
+            int k) {
+        if (k == empty.size()) {
+            displayBoard(board);
+            return true;
+        }
+
+        int r = empty.get(k) / 9;
+        int c = empty.get(k) % 9;
+
+        boolean res = false;
+
+        for (int i = 1; i <= 9; i++) {
+
+            int mask = (1 << i);
+
+            if ((row[r] & mask) == 0 && (col[c] & mask) == 0 && (mat[r / 3][c / 3] & mask) == 0) {
+
+                row[r] ^= mask;
+                col[c] ^= mask;
+                mat[r / 3][c / 3] ^= mask;
+                board[r][c] = i;
+                res = res || sudokuSolver(board, row, col, mat, empty, k + 1);
+                board[r][c] = 0;
+                row[r] ^= mask;
+                col[c] ^= mask;
+                mat[r / 3][c / 3] ^= mask;
+            }
+        }
+
+        return res;
     }
 }
