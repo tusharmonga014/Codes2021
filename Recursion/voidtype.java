@@ -74,7 +74,9 @@ public class voidtype {
         // nQueensOptimized_02(n, m, r, 0, 0, 0, tnq, ans);
         // nQueensOptimizedPermutation_02(n, m, 0, 0, 0, 0, tnq, qpsf, ans);
 
-        Sudoku();
+        // Sudoku();
+
+        AbbreviationUsingBacktracking("pep", "", 0, 0);
     }
 
     public static void subseq(String str, String ans) {
@@ -802,4 +804,31 @@ public class voidtype {
 
         return res;
     }
+
+    // ===============================================================================
+
+    // PEP site LEVEL UP
+    // -------------------------------------------------------------
+
+    // ==============================================================================
+
+    public static void AbbreviationUsingBacktracking(String str, String asf, int count, int pos) {
+        if (pos == str.length()) {
+            if (count > 0)
+                System.out.println(asf + count);
+            else
+                System.out.println(asf);
+
+            return;
+        }
+
+        if (count > 0)
+            AbbreviationUsingBacktracking(str, asf + count + str.charAt(pos), 0, pos + 1);
+        else
+            AbbreviationUsingBacktracking(str, asf + str.charAt(pos), 0, pos + 1);
+
+        AbbreviationUsingBacktracking(str, asf, count + 1, pos + 1);
+
+    }
+    // maxScore
 }
