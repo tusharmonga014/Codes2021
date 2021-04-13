@@ -76,7 +76,9 @@ public class voidtype {
 
         // Sudoku();
 
-        AbbreviationUsingBacktracking("pep", "", 0, 0);
+        // AbbreviationUsingBacktracking("pep", "", 0, 0);
+        // maxScore2
+        System.out.println(josephusProblem(8, 3));
     }
 
     public static void subseq(String str, String ans) {
@@ -830,5 +832,85 @@ public class voidtype {
         AbbreviationUsingBacktracking(str, asf, count + 1, pos + 1);
 
     }
-    // maxScore
+
+    // use subseq method instead. => easy handing of sc and recans (also with -ve
+    // scores).
+
+    // input
+
+    // 4
+    // dog cat dad good
+    // 9
+    // a b c d d d g o o
+    // 1 0 9 5 0 0 3 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0
+
+    public static int maxScore(String[] words, int[] farr, int[] score, int idx) {
+
+        if (idx == words.length)
+            return 0; // if -ve scores return -infinity.
+
+        int recAns = 0; // again -infinity if ive scores are also there.
+
+        for (int id = idx; id < words.length; id++) {
+            String word = words[id];
+            int i;
+            int sc = 0;
+            for (i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                if (farr[ch - 'a'] > 0) {
+                    farr[ch - 'a']--;
+                    sc += score[ch - 'a'];
+                } else
+                    break;
+            }
+
+            if (i == word.length())
+                recAns = Math.max(recAns, sc + maxScore(words, farr, score, id + 1));
+
+            for (int j = 0; j < i; j++) {
+                char ch = word.charAt(j);
+                farr[ch - 'a']++;
+            }
+
+        }
+        return recAns;
+    }
+
+    public static int maxScore_02(String words[], int farr[], int score[], int idx) {
+        if (idx == words.length) {
+            return (int) -1e9;
+        }
+
+        int sc_no = maxScore_02(words, farr, score, idx + 1);
+
+        String word = words[idx];
+        int sc_yes = 0, sc_word = 0;
+        int i;
+        for (i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            if (farr[ch - 'a'] > 0) {
+                farr[ch - 'a']--;
+                sc_word += score[ch - 'a'];
+            } else
+                break;
+        }
+
+        if (i == word.length())
+            sc_yes = Math.max(sc_word, sc_word + maxScore_02(words, farr, score, idx + 1));
+
+        for (int j = 0; j < i; j++) {
+            char ch = word.charAt(j);
+            farr[ch - 'a']++;
+        }
+
+        return Math.max(sc_yes, sc_no);
+    }
+
+    public static int josephusProblem(int n, int k) {
+        if (n == 1)
+            return 0;
+        int rc_idx = josephusProblem(n - 1, k);
+        return (rc_idx + k) % n;
+    }
+
 }
