@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class voidtype {
     public static void main(String[] args) {
@@ -78,7 +79,8 @@ public class voidtype {
 
         // AbbreviationUsingBacktracking("pep", "", 0, 0);
         // maxScore2
-        System.out.println(josephusProblem(8, 3));
+        // System.out.println(josephusProblem(8, 3));
+        Crypto();
     }
 
     public static void subseq(String str, String ans) {
@@ -911,6 +913,89 @@ public class voidtype {
             return 0;
         int rc_idx = josephusProblem(n - 1, k);
         return (rc_idx + k) % n;
+    }
+
+    public static void Crypto() {
+
+        String s1, s2, s3;
+        s1 = "team"; // send
+        s2 = "pep"; // more
+        s3 = "toppr"; // money
+
+        String unique = "";
+        HashMap<Character, Integer> charIntMap = new HashMap<>();
+
+        for (int i = 0; i < s1.length(); i++) {
+            if (!charIntMap.containsKey(s1.charAt(i))) {
+                charIntMap.put(s1.charAt(i), -1);
+                unique += s1.charAt(i);
+            }
+        }
+
+        for (int i = 0; i < s2.length(); i++) {
+            if (!charIntMap.containsKey(s2.charAt(i))) {
+                charIntMap.put(s2.charAt(i), -1);
+                unique += s2.charAt(i);
+            }
+        }
+
+        for (int i = 0; i < s3.length(); i++) {
+            if (!charIntMap.containsKey(s3.charAt(i))) {
+                charIntMap.put(s3.charAt(i), -1);
+                unique += s3.charAt(i);
+            }
+        }
+
+        boolean usedNumbers[] = new boolean[26];
+        crypto(unique, 0, charIntMap, usedNumbers, s1, s2, s3);
+
+    }
+
+    public static void crypto(String unique, int idx, HashMap<Character, Integer> charIntMap, boolean[] usedNumbers,
+            String s1, String s2, String s3) {
+        if (idx == unique.length()) {
+
+            int sum1 = 0, sum2 = 0, sum12 = 0, sum3 = 0;
+
+            for (int i = 0; i < s1.length(); i++) {
+                int value = charIntMap.get(s1.charAt(i));
+                sum1 = (sum1 * 10) + value;
+            }
+
+            for (int i = 0; i < s2.length(); i++) {
+                int value = charIntMap.get(s2.charAt(i));
+                sum2 = (sum2 * 10) + value;
+            }
+
+            sum12 = sum1 + sum2;
+
+            for (int i = 0; i < s3.length(); i++) {
+                int value = charIntMap.get(s3.charAt(i));
+                sum3 = (sum3 * 10) + value;
+            }
+
+            if (sum12 == sum3) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < 26; i++) {
+                    char ch = (char) (i + 'a');
+                    if (charIntMap.containsKey(ch)) {
+                        int count = charIntMap.get(ch);
+                        sb.append(ch + "-" + count + " ");
+                    }
+                }
+                System.out.println(sb);
+            }
+            return;
+        }
+
+        for (int i = 0; i < 10; i++) {
+            if (!usedNumbers[i]) {
+                usedNumbers[i] = true;
+                charIntMap.put(unique.charAt(idx), i);
+                crypto(unique, idx + 1, charIntMap, usedNumbers, s1, s2, s3);
+                usedNumbers[i] = false;
+            }
+        }
     }
 
 }
