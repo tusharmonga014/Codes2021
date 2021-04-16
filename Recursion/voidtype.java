@@ -77,10 +77,30 @@ public class voidtype {
 
         // Sudoku();
 
+        // PEPCODING QUESTIONS--------------------------------------------------------
+
         // AbbreviationUsingBacktracking("pep", "", 0, 0);
+
         // maxScore2
+
         // System.out.println(josephusProblem(8, 3));
-        Crypto();
+
+        // Crypto();
+
+        // int n = 3;
+        // int i = 1;
+        // boolean used[] = new boolean[n + 1];
+        // FriendPairing(i, n, used, "");
+
+        // int k = 3;
+        // ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        // for (int i = 0; i < k; i++) {
+        // ans.add(new ArrayList<>());
+        // }
+        // Kpartitions(1, 4, k, 0, ans);
+
+        String str = "aaabb";
+        AllPalindromicPermutations(str);
     }
 
     public static void subseq(String str, String ans) {
@@ -994,6 +1014,117 @@ public class voidtype {
                 charIntMap.put(unique.charAt(idx), i);
                 crypto(unique, idx + 1, charIntMap, usedNumbers, s1, s2, s3);
                 usedNumbers[i] = false;
+            }
+        }
+    }
+
+    static int counter = 1;
+
+    public static void FriendPairing(int i, int n, boolean[] used, String asf) {
+        if (i == n + 1) {
+            System.out.println(counter + "." + asf);
+            counter++;
+            return;
+        }
+
+        if (used[i]) {
+            FriendPairing(i + 1, n, used, asf);
+        } else {
+            used[i] = true;
+            FriendPairing(i + 1, n, used, asf + "(" + i + ") ");
+            for (int j = 1; j <= n; j++) {
+                if (!used[j]) {
+                    used[j] = true;
+                    FriendPairing(i + 1, n, used, asf + "(" + i + "," + j + ") ");
+                    used[j] = false;
+                }
+            }
+            used[i] = false;
+        }
+    }
+
+    public static void Kpartitions(int i, int n, int k, int em_sub_sf, ArrayList<ArrayList<Integer>> ans) {
+        if (i == n + 1) {
+            if (em_sub_sf == k) {
+                System.out.print(counter + ". ");
+                for (int j = 0; j < ans.size(); j++) {
+                    System.out.print(ans.get(j) + " ");
+                }
+                System.out.println();
+                counter++;
+            }
+            return;
+        }
+        for (int j = 0; j < ans.size(); j++) {
+            if (ans.get(j).size() != 0) {
+                ans.get(j).add(i);
+                Kpartitions(i + 1, n, k, em_sub_sf, ans);
+                ans.get(j).remove(ans.get(j).size() - 1);
+            } else {
+                ans.get(j).add(i);
+                Kpartitions(i + 1, n, k, em_sub_sf + 1, ans);
+                ans.get(j).remove(ans.get(j).size() - 1);
+                break;
+            }
+        }
+
+    }
+
+    public static void AllPalindromicPermutations(String str) {
+
+        int fmap[] = new int[26];
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            fmap[ch - 'a']++;
+        }
+
+        Character oddChar = null;
+        int len = 0;
+
+        for (int i = 0; i < 26; i++) {
+
+            if (fmap[i] > 0) {
+
+                if (fmap[i] % 2 != 0) {
+
+                    if (oddChar != null) { // checks if more than 1 odd char => oddchar already set.
+
+                        System.out.println("-1");
+                        return;
+                    }
+
+                    oddChar = (char) (i + 'a');
+                }
+
+                fmap[i] /= 2; // half the count.
+                len += fmap[i]; // half len added.
+            }
+        }
+
+        allPalindromicPermutations(0, len, fmap, oddChar, "");
+    }
+    
+    public static String reverse(String str) {
+        StringBuilder ans = new StringBuilder();
+        for (int i = str.length() - 1; i >= 0; i--) {
+            ans.append(str.charAt(i));
+        }
+        return ans.toString();
+    }
+
+    public static void allPalindromicPermutations(int idx, int len, int fmap[], Character oddChar, String ans) {
+        if (idx == len) {
+            System.out.print(counter + ". ");
+            System.out.println(ans + (oddChar == null ? "" : oddChar) + reverse(ans));
+            counter++;
+            return;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (fmap[i] > 0) {
+                fmap[i]--;
+                allPalindromicPermutations(idx + 1, len, fmap, oddChar, ans + (char) (i + 'a'));
+                fmap[i]++;
             }
         }
     }
