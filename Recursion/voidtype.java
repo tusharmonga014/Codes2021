@@ -99,8 +99,20 @@ public class voidtype {
         // }
         // Kpartitions(1, 4, k, 0, ans);
 
-        String str = "aaabb";
-        AllPalindromicPermutations(str);
+        // String str = "aaabb";
+        // AllPalindromicPermutations(str);
+
+        int arr[] = { 1, 2, 3, 4, 5, 6 };
+        int n = 6;
+        int k = 3;
+        int ssssf = 0;
+        int vidx = 0;
+        int subsetSum[] = new int[k];
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        for (int i = 0; i < k; i++) {
+            ans.add(new ArrayList<>());
+        }
+        solution(arr, vidx, n, k, subsetSum, ssssf, ans);
     }
 
     public static void subseq(String str, String ans) {
@@ -1103,7 +1115,7 @@ public class voidtype {
 
         allPalindromicPermutations(0, len, fmap, oddChar, "");
     }
-    
+
     public static String reverse(String str) {
         StringBuilder ans = new StringBuilder();
         for (int i = str.length() - 1; i >= 0; i--) {
@@ -1127,6 +1139,49 @@ public class voidtype {
                 fmap[i]++;
             }
         }
+    }
+
+    public static void solution(int[] arr, int vidx, int n, int k, int[] subsetSum, int ssssf,
+            ArrayList<ArrayList<Integer>> ans) {
+
+        if (vidx == n) {
+            if (ssssf == k) {
+                boolean res = true;
+                int zeroEle = subsetSum[0];
+                for (int ele : subsetSum) {
+                    if (ele != zeroEle) {
+                        res = false;
+                        break;
+                    }
+                }
+
+                if (res) {
+                    for (ArrayList<Integer> ele : ans) {
+                        System.out.print(ele + " ");
+                    }
+                    System.out.println();
+                }
+            }
+            return;
+        }
+
+        for (int j = 0; j < ans.size(); j++) {
+            if (ans.get(j).size() != 0) {
+                ans.get(j).add(arr[vidx]);
+                subsetSum[j] += arr[vidx];
+                solution(arr, vidx + 1, n, k, subsetSum, ssssf, ans);
+                ans.get(j).remove(ans.get(j).size() - 1);
+                subsetSum[j] -= arr[vidx];
+            } else {
+                ans.get(j).add(arr[vidx]);
+                subsetSum[j] += arr[vidx];
+                solution(arr, vidx + 1, n, k, subsetSum, ssssf + 1, ans);
+                ans.get(j).remove(ans.get(j).size() - 1);
+                subsetSum[j] -= arr[vidx];
+                break;
+            }
+        }
+
     }
 
 }
