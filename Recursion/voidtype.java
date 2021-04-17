@@ -102,17 +102,20 @@ public class voidtype {
         // String str = "aaabb";
         // AllPalindromicPermutations(str);
 
+        // int arr[] = { 1, 2, 3, 4, 5, 6 };
+        // int n = 6;
+        // int k = 3;
+        // int ssssf = 0;
+        // int vidx = 0;
+        // int subsetSum[] = new int[k];
+        // ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        // for (int i = 0; i < k; i++) {
+        // ans.add(new ArrayList<>());
+        // }
+        // kSubsetsEqualSum(arr, vidx, n, k, subsetSum, ssssf, ans);
+
         int arr[] = { 1, 2, 3, 4, 5, 6 };
-        int n = 6;
-        int k = 3;
-        int ssssf = 0;
-        int vidx = 0;
-        int subsetSum[] = new int[k];
-        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
-        for (int i = 0; i < k; i++) {
-            ans.add(new ArrayList<>());
-        }
-        solution(arr, vidx, n, k, subsetSum, ssssf, ans);
+        minDiffTwoSubsetEqualSize(arr, 0, new ArrayList<>(), new ArrayList<>(), 0, 0);
     }
 
     public static void subseq(String str, String ans) {
@@ -1141,7 +1144,7 @@ public class voidtype {
         }
     }
 
-    public static void solution(int[] arr, int vidx, int n, int k, int[] subsetSum, int ssssf,
+    public static void kSubsetsEqualSum(int[] arr, int vidx, int n, int k, int[] subsetSum, int ssssf,
             ArrayList<ArrayList<Integer>> ans) {
 
         if (vidx == n) {
@@ -1169,19 +1172,49 @@ public class voidtype {
             if (ans.get(j).size() != 0) {
                 ans.get(j).add(arr[vidx]);
                 subsetSum[j] += arr[vidx];
-                solution(arr, vidx + 1, n, k, subsetSum, ssssf, ans);
+                kSubsetsEqualSum(arr, vidx + 1, n, k, subsetSum, ssssf, ans);
                 ans.get(j).remove(ans.get(j).size() - 1);
                 subsetSum[j] -= arr[vidx];
             } else {
                 ans.get(j).add(arr[vidx]);
                 subsetSum[j] += arr[vidx];
-                solution(arr, vidx + 1, n, k, subsetSum, ssssf + 1, ans);
+                kSubsetsEqualSum(arr, vidx + 1, n, k, subsetSum, ssssf + 1, ans);
                 ans.get(j).remove(ans.get(j).size() - 1);
                 subsetSum[j] -= arr[vidx];
                 break;
             }
         }
-
     }
 
+    static String ans = "";
+
+    public static void minDiffTwoSubsetEqualSize(int[] arr, int vidx, ArrayList<Integer> set1, ArrayList<Integer> set2,
+            int soset1, int soset2) {
+        if (vidx == arr.length) {
+            int min_d = (soset1 >= soset2) ? (soset1 - soset2) : (soset2 - soset1);
+            if (min_d < mindiff && diff <= 1) {
+                mindiff = min_d;
+                ans = set1 + " " + set2;
+            }
+            return;
+        }
+
+        int n = arr.length;
+
+        if (set1.size() < (n + 1) / 2) {
+            set1.add(arr[vidx]);
+            soset1 += arr[vidx];
+            minDiffTwoSubsetEqualSize(arr, vidx + 1, set1, set2, soset1, soset2);
+            set1.remove(set1.size() - 1);
+            soset1 -= arr[vidx];
+        }
+
+        if (set2.size() < (n + 1) / 2) {
+            set2.add(arr[vidx]);
+            soset2 += arr[vidx];
+            minDiffTwoSubsetEqualSize(arr, vidx + 1, set1, set2, soset1, soset2);
+            set2.remove(set2.size() - 1);
+            soset2 -= arr[vidx];
+        }
+    }
 }
