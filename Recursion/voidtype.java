@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Stack;
 
 public class voidtype {
     public static void main(String[] args) {
@@ -114,8 +116,25 @@ public class voidtype {
         // }
         // kSubsetsEqualSum(arr, vidx, n, k, subsetSum, ssssf, ans);
 
-        int arr[] = { 1, 2, 3, 4, 5, 6 };
-        minDiffTwoSubsetEqualSize(arr, 0, new ArrayList<>(), new ArrayList<>(), 0, 0);
+        // int arr[] = { 1, 2, 3, 4, 5, 6 };
+        // minDiffTwoSubsetEqualSize(arr, 0, new ArrayList<>(), new ArrayList<>(), 0,
+        // 0);
+        // System.out.println(ans);
+
+        // String str = "graphtreesgraph";
+        // String pattern = "pep";
+        // HashMap<Character, String> map = new HashMap<>();
+        // patternMatching(str, pattern, map, "");
+
+        // String str = "()())()";
+        // int minRemoval = getMin(str);
+        // HashSet<String> ans = new HashSet<>();
+        // removeInvalidPranathesis(str, minRemoval, ans);
+
+        String str = "19187573";
+        max = str;
+        findMaximum(str, 3, 0);
+        System.out.println(max);
     }
 
     public static void subseq(String str, String ans) {
@@ -1187,12 +1206,17 @@ public class voidtype {
     }
 
     static String ans = "";
+    static int mindiff = (int) 1e9;
 
     public static void minDiffTwoSubsetEqualSize(int[] arr, int vidx, ArrayList<Integer> set1, ArrayList<Integer> set2,
             int soset1, int soset2) {
         if (vidx == arr.length) {
             int min_d = (soset1 >= soset2) ? (soset1 - soset2) : (soset2 - soset1);
-            if (min_d < mindiff && diff <= 1) {
+            // positive difference.
+            if (min_d < mindiff) {
+                // if <= then it will show
+                // the same with sets interchanged
+                // Also no need to check if they are of equal size. regiter->reason.
                 mindiff = min_d;
                 ans = set1 + " " + set2;
             }
@@ -1217,4 +1241,142 @@ public class voidtype {
             soset2 -= arr[vidx];
         }
     }
+
+    public static void patternMatching(String str, String pattern, HashMap<Character, String> map, String op) {
+
+        if (pattern.length() == 0 || str.length() == 0) {
+            if (pattern.length() == 0 && str.length() == 0) {
+                System.out.println(op + ".");
+            }
+            return;
+        }
+
+        char ch = pattern.charAt(0);
+        // System.out.println(op);
+
+        if (map.containsKey(ch)) {
+
+            String toBeMapped = map.get(ch);
+            if (str.length() < toBeMapped.length()) {
+                return;
+            } else {
+                String st = str.substring(0, toBeMapped.length());
+                if (st.equals(toBeMapped)) {
+                    patternMatching(str.substring(toBeMapped.length()), pattern.substring(1), map, op);
+                } else {
+                    return;
+                }
+            }
+
+        } else {
+            if (pattern.length() > 1) {
+                for (int i = 0; i < str.length() - (pattern.length() - 1); i++) {
+
+                    String testStr = str.substring(0, i + 1);
+                    String ros = str.substring(i + 1);
+
+                    map.put(ch, testStr);
+                    patternMatching(ros, pattern.substring(1), map, op + ch + " -> " + testStr + ", ");
+                    map.remove(ch);
+                }
+            } else {
+
+                map.put(ch, str);
+                patternMatching("", "", map, op + ch + " -> " + str + ", ");
+                map.remove(ch);
+            }
+        }
+
+    }
+
+    public static void removeInvalidPranathesis(String str, int minRemoval, HashSet<String> ans) {
+
+        if (minRemoval == 0) {
+
+            if (getMin(str) == 0 && !ans.contains(str)) {
+
+                System.out.println(str);
+                ans.add(str);
+            }
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+
+            String left = str.substring(0, i);
+            String right = str.substring(i + 1);
+
+            removeInvalidPranathesis(left + right, minRemoval - 1, ans);
+        }
+    }
+
+    public static int getMin(String str) {
+
+        Stack<Character> st = new Stack<>();
+
+        for (int i = 0; i < str.length(); i++) {
+
+            if (str.charAt(i) == '(') {
+
+                st.push(str.charAt(i));
+
+            } else {
+
+                if (st.size() == 0 || st.peek() == ')')
+                    st.push(')');
+
+                else
+                    st.pop();
+            }
+        }
+
+        return st.size();
+    }
+
+    static String max;
+
+    public static String swap(String str, int i, int j) {
+        String ith = str.substring(i, i + 1);
+        String jth = str.substring(j, j + 1);
+
+        String left = str.substring(0, i);
+        String mid = str.substring(i + 1, j);
+        String right = str.substring(j + 1, str.length());
+
+        return left + jth + mid + ith + right;
+    }
+
+    public static void findMaximum(String str, int k, int i) {
+        if (k == 0 || i == str.length()) {
+            return;
+        }
+
+        int max_ = str.charAt(i);
+
+        for (int j = i + 1; j < str.length(); j++) {
+            if (max_ < str.charAt(j)) {
+                max_ = str.charAt(j);
+            }
+        }
+
+        if (max_ == str.charAt(i))
+            findMaximum(str, k, i + 1);
+        else {
+
+            k--;
+
+            for (int j = i + 1; j < str.length(); j++) {
+                if (max_ == str.charAt(j)) {
+                    String swapped = swap(str, i, j);
+
+                    if (swapped.compareTo(max) > 0)
+                        max = swapped;
+
+                    findMaximum(swapped, k, i + 1);
+                }
+            }
+        }
+
+    }
+
 }
