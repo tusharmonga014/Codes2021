@@ -132,4 +132,24 @@ public class foundation {
         return dp[i] = count;
     }
 
+    public static int climbStairsVarJumpDP(int[] arr, int i, int[] dp) {
+        
+        if (i == arr.length) {
+            return dp[i] = 1;
+        }
+
+        if (dp[i] != -1)
+            return dp[i];
+
+        int count = 0;
+
+        System.out.println("Hi " + i);
+        for (int step = 1; step <= arr[i]; step++) {
+            if (i + step <= arr.length)
+                count += climbStairsVarJump(arr, i + step, dp);
+        }
+
+        return dp[i] = count;
+    }
+
 }
