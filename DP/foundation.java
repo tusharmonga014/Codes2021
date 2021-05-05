@@ -23,7 +23,7 @@ public class foundation {
         int n = 10;
         int arr[] = { 3, 3, 0, 2, 1, 2, 4, 2, 0, 0 };
         int[] dp = new int[n + 1];
-        Arrays.fill(dp, -1);
+        Arrays.fill(dp, -1); // will also work with 0
         int ans = climbStairsVarJump(arr, 0, dp);
         System.out.println(ans);
 
@@ -133,17 +133,16 @@ public class foundation {
     }
 
     public static int climbStairsVarJumpDP(int[] arr, int i, int[] dp) {
-        
+
         if (i == arr.length) {
             return dp[i] = 1;
         }
 
         if (dp[i] != -1)
-            return dp[i];
+            return dp[i]; // will also work with 0
 
         int count = 0;
 
-        System.out.println("Hi " + i);
         for (int step = 1; step <= arr[i]; step++) {
             if (i + step <= arr.length)
                 count += climbStairsVarJump(arr, i + step, dp);
@@ -151,5 +150,4 @@ public class foundation {
 
         return dp[i] = count;
     }
-
 }
