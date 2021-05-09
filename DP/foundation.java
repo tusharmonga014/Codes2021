@@ -20,13 +20,26 @@ public class foundation {
         // display1D(dp);
 
         // Climb stairs var jump--------------------------------
+        // int n = 10;
+        // int arr[] = { 3, 3, 0, 2, 1, 2, 4, 2, 0, 0 };
+        // int[] dp = new int[n + 1];
+        // Arrays.fill(dp, -1); // will also work with 0
+        // int ans = climbStairsVarJump(arr, 0, dp);
+        // System.out.println(ans);
+
+        // Min Move Var Jump ---- MOST IMP-----------------------
         int n = 10;
         int arr[] = { 3, 3, 0, 2, 1, 2, 4, 2, 0, 0 };
         int[] dp = new int[n + 1];
-        Arrays.fill(dp, -1); // will also work with 0
-        int ans = climbStairsVarJump(arr, 0, dp);
-        System.out.println(ans);
-
+        Arrays.fill(dp, -1); // V.V.IMP
+        dp[n] = 0;
+        // int ans = minMoveVarJump(arr, 0);
+        int ans = minMoveVarJumpDP(arr, dp);
+        if (ans != -1) {
+            System.out.println(ans);
+        } else {
+            System.out.println("null");
+        }
     }
 
     // ===========================================================================================================
@@ -150,4 +163,43 @@ public class foundation {
 
         return dp[i] = count;
     }
+
+    // =================================================================================================
+
+    public static int minMoveVarJump(int arr[], int i) {
+        if (i == arr.length) {
+            return 0;
+        }
+
+        int min_ = (int) 1e9;
+
+        for (int step = 1; step <= arr[i]; step++) {
+            min_ = Math.min(min_, minMoveVarJump(arr, i + step));
+        }
+
+        if (min_ != (int) 1e9) {
+            min_++;
+        }
+
+        return min_;
+    }
+
+    public static int minMoveVarJumpDP(int arr[], int dp[]) {
+
+        int n = arr.length;
+
+        for (int i = n - 1; i >= 0; i--) {
+            int min_ = Integer.MAX_VALUE; // imp
+            for (int j = 1; j <= arr[i] && i + j <= n; j++) {
+                if (dp[i + j] != -1) // imp
+                    min_ = Math.min(min_, dp[i + j]);
+            }
+            if (min_ != Integer.MAX_VALUE) // imp
+                dp[i] = min_ + 1;
+        }
+
+        return dp[0];
+
+    }
+
 }
