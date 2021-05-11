@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class foundation {
     public static void main(String[] args) {
@@ -28,18 +29,45 @@ public class foundation {
         // System.out.println(ans);
 
         // Min Move Var Jump ---- MOST IMP-----------------------
-        int n = 10;
-        int arr[] = { 3, 3, 0, 2, 1, 2, 4, 2, 0, 0 };
-        int[] dp = new int[n + 1];
-        Arrays.fill(dp, -1); // V.V.IMP
-        dp[n] = 0;
-        // int ans = minMoveVarJump(arr, 0);
-        int ans = minMoveVarJumpDP(arr, dp);
-        if (ans != -1) {
-            System.out.println(ans);
-        } else {
-            System.out.println("null");
-        }
+        // int n = 10;
+        // int arr[] = { 3, 3, 0, 2, 1, 2, 4, 2, 0, 0 };
+        // int[] dp = new int[n + 1];
+        // Arrays.fill(dp, -1); // V.V.IMP
+        // dp[n] = 0;
+        // // int ans = minMoveVarJump(arr, 0);
+        // int ans = minMoveVarJumpDP(arr, dp);
+        // if (ans != -1) {
+        // System.out.println(ans);
+        // } else {
+        // System.out.println("null");
+        // }
+
+        // MAZEPATH------------------------------------------------
+        int n = 4;
+        int m = 4;
+        int sr = 0;
+        int sc = 0;
+        int er = n - 1;
+        int ec = m - 1;
+        int dp[][] = new int[n][m];
+
+        // int ans = mazepath_memo(sr, sc, er, ec, dp);
+        // int ans = mazepathDP(sr, sc, er, ec, dp);
+
+        // int ans = mazepath_infiDP(sr, sc, er, ec, dp);
+
+        // ArrayList<String> tdp[][] = new ArrayList[n][m];
+        // for (int i = 0; i < n; i++)
+        // for (int j = 0; j < m; j++)
+        // tdp[i][j] = new ArrayList<>();
+        // ArrayList<String> tans = maze(sr, sc, er, ec, tdp);
+        // for (String s : tans)
+        // System.out.println(s);
+
+        int cost[][] = { { 0, 1, 4, 2 }, { 4, 3, 6, 5 }, { 1, 2, 4, 1 }, { 1, 2, 4, 1 } };
+        int ans = minCostMazeTraversal(sr, sc, n - 1, m - 1, cost, dp);
+
+        System.out.println(ans);
     }
 
     // ===========================================================================================================
@@ -200,6 +228,146 @@ public class foundation {
 
         return dp[0];
 
+    }
+
+    // ====================================================================================================
+
+    // -------MAZEPATH------------------------
+
+    public static int mazepath_memo(int sr, int sc, int er, int ec, int dp[][]) {
+        if (sr == er && sc == ec)
+            return dp[sr][sc] = 1;
+
+        if (dp[sr][sc] != 0)
+            return dp[sr][sc];
+
+        if (sr + 1 <= er)
+            dp[sr][sc] += mazepath_memo(sr + 1, sc, er, ec, dp);
+
+        if (sc + 1 <= ec)
+            dp[sr][sc] += mazepath_memo(sr, sc + 1, er, ec, dp);
+
+        if (sr + 1 <= er && sc + 1 <= ec)
+            dp[sr][sc] += mazepath_memo(sr + 1, sc + 1, er, ec, dp);
+
+        return dp[sr][sc];
+    }
+
+    public static int mazepathDP(int sr, int sc, int er, int ec, int dp[][]) {
+
+        dp[er][ec] = 1; // FORGOT
+
+        for (int i = er; i >= sr; i--) {
+            for (int j = ec; j >= sc; j--) {
+
+                if (i + 1 <= er)
+                    dp[i][j] += dp[i + 1][j];
+
+                if (j + 1 <= ec)
+                    dp[i][j] += dp[i][j + 1];
+
+                if (i + 1 <= er && j + 1 <= ec)
+                    dp[i][j] += dp[i + 1][j + 1];
+            }
+        }
+
+        return dp[sr][sc];
+    }
+
+    public static int mazepath_infiDP(int sr, int sc, int er, int ec, int dp[][]) {
+
+        dp[er][ec] = 1;
+
+        for (int i = er; i >= sr; i--) {
+            for (int j = ec; j >= sc; j--) {
+
+                for (int jump = 1; jump + i <= er; jump++) {
+                    dp[i][j] += dp[i + jump][j];
+                }
+
+                for (int jump = 1; jump + j <= ec; jump++) {
+                    dp[i][j] += dp[i][j + jump];
+                }
+
+                for (int jump = 1; jump + i <= er && jump + j <= ec; jump++) {
+                    dp[i][j] += dp[i + jump][j + jump];
+                }
+
+            }
+        }
+
+        return dp[sr][sc];
+    }
+
+    public static ArrayList<String> maze(int sr, int sc, int er, int ec, ArrayList<String> dp[][]) {
+
+        if (sr == er && sc == ec) {
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+
+        if (dp[sr][sc].size() != 0) {
+            return dp[sr][sc];
+        }
+
+        ArrayList<String> smallAns;
+        ArrayList<String> myAns = new ArrayList<>();
+
+        System.out.println("[" + sr + ", " + sc + "]");
+
+        if (sr + 1 <= er) {
+            smallAns = maze(sr + 1, sc, er, ec, dp);
+            for (String s : smallAns) {
+                myAns.add(s + "V");
+            }
+        }
+
+        if (sc + 1 <= er) {
+            smallAns = maze(sr, sc + 1, er, ec, dp);
+            for (String s : smallAns) {
+                myAns.add(s + "H");
+            }
+        }
+
+        if (sr + 1 <= er && sc + 1 <= ec) {
+            smallAns = maze(sr + 1, sc + 1, er, ec, dp);
+            for (String s : smallAns) {
+                myAns.add(s + "D");
+            }
+        }
+
+        return dp[sr][sc] = myAns;
+    }
+
+    public static int minCostMazeTraversal(int sr, int sc, int er, int ec, int cost[][], int dp[][]) {
+
+        // base case handled in loop (essential to handle there)
+
+        for (int i = er; i >= sr; i--) {
+            for (int j = ec; j >= sc; j--) {
+
+                int minCost = Integer.MAX_VALUE;
+
+                if (i + 1 <= er)
+                    minCost = Math.min(minCost, dp[i + 1][j]);
+
+                if (j + 1 <= ec)
+                    minCost = Math.min(minCost, dp[i][j + 1]);
+
+                if (i + 1 <= er && j + 1 <= ec)
+                    minCost = Math.min(minCost, dp[i + 1][j + 1]);
+
+                if (i == er && j == ec) {
+                    dp[i][j] = cost[i][j];
+                } else {
+                    dp[i][j] = minCost + cost[i][j];
+                }
+
+            }
+        }
+
+        return dp[sr][sc];
     }
 
 }
