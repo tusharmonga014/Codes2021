@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.ArrayList;
 
 public class foundation {
@@ -64,8 +65,15 @@ public class foundation {
         // for (String s : tans)
         // System.out.println(s);
 
-        int cost[][] = { { 0, 1, 4, 2 }, { 4, 3, 6, 5 }, { 1, 2, 4, 1 }, { 1, 2, 4, 1 } };
-        int ans = minCostMazeTraversal(sr, sc, n - 1, m - 1, cost, dp);
+        // int cost[][] = { { 0, 1, 4, 2 }, { 4, 3, 6, 5 }, { 1, 2, 4, 1 }, { 1, 2, 4, 1
+        // } };
+        // int ans = minCostMazeTraversal(sr, sc, n - 1, m - 1, cost, dp);
+
+        // BOARD PATH--------------V.V.V.V.V.V.IMPORTANT---------------
+        int sp = 0;
+        int ep = 10;
+        int K = 6;
+        int ans = boardPath(sp, ep, K);
 
         System.out.println(ans);
     }
@@ -368,6 +376,33 @@ public class foundation {
         }
 
         return dp[sr][sc];
+    }
+
+    // ==========================================================================================================
+    // -------BOARD PATH--------- V.V.V.V.V.V.V IMPORTANT
+
+    public static int boardPath(int sp, int ep, int K) {
+
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = ep; i >= sp; i--) {
+
+            if (i >= ep - 1) {
+
+                list.addFirst(1);
+
+            } else {
+
+                if (list.size() <= K)
+                    list.addFirst(2 * list.getFirst());
+                else
+                    list.addFirst((2 * list.getFirst()) - list.removeLast());
+
+            }
+
+        }
+
+        return list.getFirst();
     }
 
 }
