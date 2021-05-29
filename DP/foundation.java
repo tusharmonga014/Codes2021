@@ -44,13 +44,13 @@ public class foundation {
         // }
 
         // MAZEPATH------------------------------------------------
-        int n = 4;
-        int m = 4;
-        int sr = 0;
-        int sc = 0;
-        int er = n - 1;
-        int ec = m - 1;
-        int dp[][] = new int[n][m];
+        // int n = 4;
+        // int m = 4;
+        // int sr = 0;
+        // int sc = 0;
+        // int er = n - 1;
+        // int ec = m - 1;
+        // int dp[][] = new int[n][m];
 
         // int ans = mazepath_memo(sr, sc, er, ec, dp);
         // int ans = mazepathDP(sr, sc, er, ec, dp);
