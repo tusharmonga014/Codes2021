@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class targetSum {
     public static void main(String args[]) {
@@ -8,7 +9,7 @@ public class targetSum {
         int tar = 10;
 
         int dp[] = new int[tar + 1];
-        int dp2[][] = new int[arr.length + 1][tar + 1];
+        // int dp2[][] = new int[arr.length + 1][tar + 1];
 
         // System.out.println(targetSumSubset(arr, tar));
 
@@ -18,11 +19,22 @@ public class targetSum {
         // System.out.println(infinitePermutationTAB(arr, tar));
 
         // System.out.println(infiniteCombination(arr, tar, 0));
-        for (int i = 0; i < dp2.length; i++)
-            Arrays.fill(dp2[i], -1);
+        // for (int i = 0; i < dp2.length; i++)
+        // Arrays.fill(dp2[i], -1);
         // System.out.println(infiniteCombination2DP(arr, tar, 0, dp2));
-        System.out.println(infiniteCombination_2DTAB(arr, tar));
+        // System.out.println(infiniteCombination_2DTAB(arr, tar));
 
+        // int weight[] = { 2, 5, 1, 3, 4 };
+        // int value[] = { 15, 14, 10, 45, 30 };
+        // int bagw = 7;
+        // int dp2[][] = new int[weight.length + 1][bagw + 1];
+        // for (int i = 0; i < dp2.length; i++)
+        // Arrays.fill(dp2[i], Integer.MAX_VALUE);
+
+        // System.out.println(zero_one_knapsack_memo(weight, value, bagw, 0, dp2));
+        // System.out.println(zero_one_knapsack_Dp(weight, value, bagw));
+
+        System.out.println(fractionalKnapSack());
     }
 
     public static boolean targetSumSubset(int[] arr, int tar) {
@@ -174,6 +186,7 @@ public class targetSum {
         return dp[tar];
     }
 
+    // -------- LEETCODE 322 -------------------
     public int coinChangeAns(int arr[], int tar) {
 
         if (tar == 0)
@@ -196,4 +209,147 @@ public class targetSum {
         return dp[tar] == Integer.MAX_VALUE ? -1 : dp[tar];
     }
 
+    public static int zero_one_knapsack(int weight[], int value[], int bagw, int idx) {
+        if (idx == weight.length || bagw == 0)
+            return 0;
+
+        int notIncludingMe = zero_one_knapsack(weight, value, bagw, idx + 1);
+        int includingMe = 0;
+        if (bagw - weight[idx] >= 0)
+            includingMe = zero_one_knapsack(weight, value, bagw - weight[idx], idx + 1) + value[idx];
+
+        return Math.max(notIncludingMe, includingMe);
+    }
+
+    public static int counter = 0;
+
+    public static int zero_one_knapsack_memo(int weight[], int value[], int bagw, int idx, int dp[][]) {
+        if (idx == weight.length || bagw == 0)
+            return dp[idx][bagw] = 0;
+
+        if (dp[idx][bagw] != Integer.MAX_VALUE) {
+            System.out.println("Using dp[" + idx + "][" + bagw + "] = " + dp[idx][bagw]);
+            return dp[idx][bagw];
+        }
+
+        int notIncludingMe = zero_one_knapsack_memo(weight, value, bagw, idx + 1, dp);
+
+        int includingMe = 0;
+        if (bagw - weight[idx] >= 0)
+            includingMe = zero_one_knapsack_memo(weight, value, bagw - weight[idx], idx + 1, dp) + value[idx];
+
+        dp[idx][bagw] = Math.max(notIncludingMe, includingMe);
+        System.out.println(("Saving dp[" + idx + "][" + bagw + "] = " + dp[idx][bagw]));
+
+        return dp[idx][bagw];
+    }
+
+    public static int zero_one_knapsack_Dp(int weight[], int value[], int cap) {
+
+        int dp[][] = new int[weight.length + 1][cap + 1];
+
+        for (int idx = 1; idx < weight.length + 1; idx++) {
+            for (int tar = 1; tar < cap + 1; tar++) {
+
+                int notIncludingMe = dp[idx - 1][tar];
+
+                int includingMe = 0;
+                if (tar - weight[idx - 1] >= 0) { // IMP ..Wrote wrong two times ..write in this way only.. tar-xyz >= 0
+                    includingMe = dp[idx - 1][tar - weight[idx - 1]] + value[idx - 1];
+                }
+
+                dp[idx][tar] = Math.max(notIncludingMe, includingMe);
+            }
+        }
+
+        return dp[weight.length][cap];
+
+    }
+
+    // ----FRACTIONAL KNAPSACK----------------------------
+
+    // ------GREEDY ALGO-----------------------------------
+    //
+
+    public static double fractionalKnapSack() {
+
+        int n = 10;
+        // int n=20;
+
+        int v[] = new int[n];
+        int w[] = new int[n];
+
+        // v = new int[] { 1, 43, 22, 25, 10, 7, 17, 16, 7, 2, 12, 11, 37, 40, 48, 35,
+        // 1, 35, 3, 25 };
+        // w = new int[] { 8, 5, 5, 2, 7, 3, 2, 4, 5, 6, 10, 3, 9, 6, 10, 4, 7, 7, 10, 3
+        // };
+        // int cap = 4;
+
+        v = new int[] { 33, 14, 50, 9, 8, 11, 6, 40, 2, 15 };
+        w = new int[] { 7, 2, 5, 9, 3, 2, 1, 10, 3, 3 };
+        int cap = 5;
+
+
+        /**
+         * Solution begins from here
+         * 
+         * 
+         */
+
+        Ratio r[] = new Ratio[n];
+
+        for (int i = 0; i < n; i++) {
+            double rat = (double) ((v[i] * 1.0) / (1.0 * w[i]));
+            int wei = w[i];
+            int val = v[i];
+            r[i] = new Ratio(rat, val, wei);
+        }
+
+        Arrays.sort(r, new Comparator<Ratio>() {
+            @Override
+            public int compare(Ratio o1, Ratio o2) {
+                return (o2.ratio > o1.ratio) ? 1 : ((o2.ratio < o1.ratio) ? -1 : 0);
+            }
+        });
+
+        double ansValue = 0;
+
+        for (int i = 0; i < n && cap > 0; i++) {
+
+            if (cap < r[i].weight) {
+                ansValue += (cap * r[i].ratio);
+                cap = 0;
+
+            } else {
+                ansValue += (r[i].weight * r[i].ratio); // value of complete element
+                cap -= r[i].weight;
+
+            }
+
+        }
+
+        return ansValue;
+    }
+
+    public static class Ratio {
+        double ratio;
+        int value;
+        int weight;
+
+        public Ratio() {
+
+        }
+
+        public Ratio(double ratio, int value, int weight) {
+            this.ratio = ratio;
+            this.value = value;
+            this.weight = weight;
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+
+
+    
 }
