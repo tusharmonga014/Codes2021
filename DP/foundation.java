@@ -6,8 +6,8 @@ public class foundation {
     public static void main(String[] args) {
 
         // FIBONACCI-----------------------------------------
-        // int n = 6;
-        // int[] dp = new int[n + 1];
+        int n = 7;
+        int[] dp = new int[n + 1];
         // Arrays.fill(dp, -1);
         // // System.out.println(fiboDpMemoized(n, dp));
         // System.out.println(fiboDpTabulation(n, dp));
@@ -70,12 +70,28 @@ public class foundation {
         // int ans = minCostMazeTraversal(sr, sc, n - 1, m - 1, cost, dp);
 
         // BOARD PATH--------------V.V.V.V.V.V.IMPORTANT---------------
-        int sp = 0;
-        int ep = 10;
-        int K = 6;
-        int ans = boardPath(sp, ep, K);
+        // int sp = 0;
+        // int ep = 10;
+        // int K = 6;
+        // int ans = boardPath(sp, ep, K);
 
-        System.out.println(ans);
+        // System.out.println(ans);
+
+        /**
+         * ***********************************************************
+         * 
+         * TAGRET SUM SUBSET
+         * 
+         * ***********************************************************
+         */
+
+        // System.out.println(binaryStringNonConsecZero(2, false));
+        // int dp0[] = new int[n + 1];
+        // int dp1[] = new int[n + 1];
+        // System.out.println(binaryStringNonConsecZero(n, false));
+        // System.out.println(binaryStringNonConsecZero_memo(n, false, dp0, dp1));
+        // System.out.println(binaryStringNonConsecZero_dp(n));
+
     }
 
     // ===========================================================================================================
@@ -403,6 +419,144 @@ public class foundation {
         }
 
         return list.getFirst();
+    }
+
+    /**
+     * **********************************************
+     * 
+     * 
+     * 
+     * -------------TARGET SUMSUBSET---------------
+     * 
+     * 
+     * 
+     * **********************************************
+     */
+
+    public static int binaryStringNonConsecZero(int n, boolean prevZero) {
+
+        if (n == 1) {
+            if (prevZero)
+                return 1;
+            else
+                return 2; // 1+1 zero and one
+        }
+
+        int count = 0;
+
+        // Adding 0 to the string and passing it.
+        if (!prevZero)
+            count += binaryStringNonConsecZero(n - 1, true);
+
+        // Adding 1 to the string.
+        count += binaryStringNonConsecZero(n - 1, false);
+
+        return count;
+    }
+
+    public static int binaryStringNonConsecZero_memo(int n, boolean prevZero, int dp0[], int dp1[]) {
+
+        if (n == 1) {
+
+            if (prevZero) {
+                return dp1[n] = 1;
+            } else {
+                return dp0[n] = 2;
+            }
+
+        }
+
+        if (prevZero && dp1[n] != 0) {
+            return dp1[n];
+        }
+        if (!prevZero && dp1[n] != 0) {
+            return dp0[n];
+        }
+
+        // 0 can only be added if previous was not 0
+        if (!prevZero)
+            dp0[n] += binaryStringNonConsecZero(n - 1, true);
+
+        // Adding 1 to the string.
+        dp1[n] += binaryStringNonConsecZero(n - 1, false);
+
+        return dp0[n] + dp1[n];
+
+    }
+
+    public static int binaryStringNonConsecZero_dp(int n) {
+
+        int countStrEnd0 = 1;
+        int countStrEnd1 = 1;
+
+        for (int i = 2; i <= n; i++) {
+
+            int NEWcountStrEnd0 = countStrEnd1;
+            int NEWcountStrEnd1 = (countStrEnd0 + countStrEnd1);
+
+            countStrEnd0 = NEWcountStrEnd0;
+            countStrEnd1 = NEWcountStrEnd1;
+        }
+
+        return countStrEnd0 + countStrEnd1;
+    }
+
+    public static void arrangeBuildings(int n) {
+
+        long csp = 1;
+        long cbd = 1;
+
+        for (int i = 2; i <= n; i++) {
+
+            long ncbd = csp;
+            long ncsp = csp + cbd;
+
+            csp = ncsp;
+            cbd = ncbd;
+        }
+
+        long ans = cbd + csp;
+        ans = ans * ans;
+
+        System.out.println(ans);
+
+    }
+
+    public static int countEncodings(String str) {
+
+        int n = str.length();
+        int dp[] = new int[n];
+
+        dp[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+
+            if (str.charAt(i - 1) == '0' && str.charAt(i) == '0') {
+
+                dp[i] = 0;
+
+            } else if (str.charAt(i - 1) == '0' && str.charAt(i) != '0') {
+
+                dp[i] = dp[i - 1];
+
+            } else if (str.charAt(i - 1) != '0' && str.charAt(i) == '0') {
+
+                if (str.charAt(i - 1) == '1' || str.charAt(i) == '2')
+                    dp[i] = i == 1 ? 1 : dp[i - 2];
+
+            } else {
+
+                if (Integer.parseInt(str.substring(i - 1, i + 1)) <= 26)
+                    dp[i] = dp[i - 1] + i == 1 ? 1 : dp[i - 2];
+                else
+                    dp[i] = dp[i - 1];
+
+            }
+
+        }
+
+        return dp[n - 1];
+
     }
 
 }
