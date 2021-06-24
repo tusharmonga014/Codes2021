@@ -547,7 +547,7 @@ public class foundation {
             } else {
 
                 if (Integer.parseInt(str.substring(i - 1, i + 1)) <= 26)
-                    dp[i] = dp[i - 1] + i == 1 ? 1 : dp[i - 2];
+                    dp[i] = dp[i - 1] + ((i == 1) ? 1 : dp[i - 2]);
                 else
                     dp[i] = dp[i - 1];
 
@@ -558,5 +558,381 @@ public class foundation {
         return dp[n - 1];
 
     }
+
+    // for pattern a+b+c+
+    public static int countabc(String str, int idx) {
+
+        int a = 0;
+        int ab = 0;
+        int abc = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+
+            char ch = str.charAt(i);
+
+            if (ch == 'a') {
+                a = (2 * a) + 1;
+            } else if (ch == 'b') {
+                ab = (2 * ab) + a;
+            } else if (ch == 'c') {
+                abc = (2 * abc) + ab;
+            }
+
+        }
+
+        return abc;
+
+    }
+
+    public static int maxSumNonAdjacentElementsInArray(int arr[]) {
+
+        int length = arr.length;
+
+        int inc = arr[0];
+        int exc = 0;
+
+        for (int loopIterator = 1; loopIterator < length; loopIterator++) {
+
+            int newInc = exc + arr[loopIterator];
+            int newExc = Math.max(inc, exc);
+
+            inc = newInc;
+            exc = newExc;
+
+        }
+
+        int ans = Math.max(inc, exc);
+        return ans;
+
+    }
+
+    public static int paintHouse(int[][] cost) {
+
+        int red = cost[0][0];
+        int blue = cost[0][1];
+        int green = cost[0][2];
+
+        for (int i = 1; i < cost.length; i++) {
+
+            int currHouseRed = Math.min(blue, green) + cost[i][0];
+            int currHouseBlue = Math.min(red, green) + cost[i][1];
+            int currHouseGreen = Math.min(red, blue) + cost[i][2];
+
+            red = currHouseRed;
+            blue = currHouseBlue;
+            green = currHouseGreen;
+
+        }
+
+        int fAns = Math.min(Math.min(red, blue), green);
+
+        return fAns;
+    }
+
+    public static int paintHouse_NColors(int[][] arr) {
+
+        int n = arr.length;
+        int k = arr[0].length;
+
+        int costs[] = new int[k];
+
+        for (int i = 0; i < k; i++)
+            costs[i] = arr[0][i];
+
+        for (int i = 1; i < n; i++) {
+
+            int min1 = Integer.MAX_VALUE;
+            int min2 = Integer.MAX_VALUE;
+            for (int fmin = 0; fmin < k; fmin++) {
+                if (costs[fmin] <= min1) {
+                    min2 = min1;
+                    min1 = costs[fmin];
+                } else if (costs[fmin] <= min2) {
+                    min2 = costs[fmin];
+                }
+            }
+
+            int newCosts[] = new int[k];
+            for (int j = 0; j < k; j++) {
+
+                int myValue = arr[i][j];
+                int prevValue;
+
+                if (min1 == costs[j])
+                    prevValue = min2;
+                else
+                    prevValue = min1;
+
+                newCosts[j] = myValue + prevValue;
+            }
+
+            costs = newCosts;
+            System.out.println(costs);
+        }
+
+        int min_ = Integer.MAX_VALUE;
+        for (int i = 0; i < k; i++) {
+            min_ = Math.min(costs[i], min_);
+        }
+
+        return min_;
+    }
+
+    public static int paintHouse_NColors_(int[][] arr) {
+
+        int n = arr.length;
+        int k = arr[0].length;
+
+        int costs[] = new int[k];
+
+        for (int i = 0; i < k; i++)
+            costs[i] = arr[0][i];
+
+        for (int i = 1; i < n; i++) {
+
+            int min1 = 0;
+            int min2 = 1;
+            for (int fmin = 1; fmin < k; fmin++) {
+                if (costs[fmin] <= costs[min1]) {
+                    min2 = min1;
+                    min1 = fmin;
+                } else if (costs[fmin] < costs[min2]) {
+                    min2 = fmin;
+                }
+            }
+
+            int newCosts[] = new int[k];
+            for (int j = 0; j < k; j++) {
+
+                int myValue = arr[i][j];
+                int prevValue;
+
+                if (min1 == j)
+                    prevValue = costs[min2];
+                else
+                    prevValue = costs[min1];
+
+                newCosts[j] = myValue + prevValue;
+            }
+
+            costs = newCosts;
+        }
+
+        int min_ = Integer.MAX_VALUE;
+        for (int i = 0; i < k; i++) {
+            min_ = Math.min(costs[i], min_);
+        }
+
+        return min_;
+    }
+
+    public static int paintFence(int n, int k) {
+
+        // V IMP for n=1 last2same and last2diff are NOT DEF.. only we know total=k.
+        if (n == 1) {
+            return k;
+        }
+
+        // defining for n=2.
+        int last2same = k;
+        int last2diff = k * (k - 1);
+        int total = last2same + last2diff;
+
+        for (int i = 3; i <= n; i++) {
+
+            int newLast2same = last2diff;
+            int newLast2diff = total * (k - 1);
+
+            last2same = newLast2same;
+            last2diff = newLast2diff;
+
+            total = last2same + last2diff;
+        }
+
+        return total;
+    }
+
+    public static int Tiling_2_1(int n) {
+
+        int b2_1 = 1;
+        int b2_2 = 2;
+
+        for (int i = 3; i <= n; i++) {
+            int curr = b2_1 + b2_2;
+            b2_1 = b2_2;
+            b2_2 = curr;
+        }
+
+        return b2_2;
+    }
+
+    public static int Tiling_m_1(int n, int m) {
+
+        int dp[] = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            if (i < m) {
+
+                dp[i] = 1;
+
+            } else if (i == m) {
+
+                dp[i] = 2;
+
+            } else {
+
+                dp[i] = dp[i - 1] + dp[i - m];
+
+            }
+        }
+
+        return dp[n];
+
+    }
+
+    public static int friendsPairing(int n) {
+
+        int dp[] = new int[n + 1];
+
+        dp[0] = 0;
+        dp[1] = 1;
+        dp[2] = 2;
+
+        for (int i = 3; i <= n; i++) {
+
+            dp[i] = dp[i - 1] + (i - 1) * dp[i - 2];
+
+        }
+
+        return dp[n];
+
+    }
+
+    public static long partitionKSubset(int n, int k) {
+
+        if (n == 0 || k == 0 || n < k) {
+            return 0;
+        }
+
+        long dp[][] = new long[k + 1][n + 1];
+
+        for (int set = 1; set <= k; set++) {
+
+            for (int elem = set; elem <= n; elem++) {
+
+                if (set == elem)
+                    dp[set][elem] = 1;
+                else {
+
+                    long restEleminKteams = (set * dp[set][elem - 1]);
+                    long restEleminK_1_teams = dp[set - 1][elem - 1];
+
+                    dp[set][elem] = restEleminKteams + restEleminK_1_teams;
+
+                }
+            }
+        }
+
+        return dp[k][n];
+
+    }
+
+    public static int BSS_one_transaction_allowed(int arr[]) {
+
+        int n = arr.length;
+        int lsf = Integer.MAX_VALUE;
+        int overAllProfit = Integer.MIN_VALUE;
+
+        for (int i = 0; i < n; i++) {
+
+            if (arr[i] < lsf)
+                lsf = arr[i];
+
+            int profitIfSoldToday = arr[i] - lsf;
+            if (profitIfSoldToday > overAllProfit)
+                overAllProfit = profitIfSoldToday;
+
+        }
+
+        return overAllProfit;
+    }
+
+    public static int BSS_infinte_transaction(int[] prices) {
+
+        int n = prices.length;
+
+        int bd = 0;
+        int sd = 0;
+        int profit = 0;
+
+        for (int i = 1; i < n; i++) {
+
+            if (prices[i] < prices[i - 1]) {
+
+                // DIP
+                profit += prices[sd] - prices[bd];
+
+                bd = i;
+                sd = i;
+
+            } else {
+
+                // RISE OR SAME
+                sd++;
+            }
+
+        }
+
+        profit += prices[sd] - prices[bd];
+
+        return profit;
+
+    }
+
+    // public static int BSS_infiniteTransaction_fee_RECURSION(int []arr,boolean
+    // haveShare, int money, int i, int fee){
+
+    // if(i==arr.length){
+    // return money;
+    // }
+
+    // int profit = 0;
+
+    // //no need to buy if already having a share or if its the last day
+    // if(!haveShare && i!=arr.length-1){
+    // profit = Math.max(profit,
+    // BSS_infiniteTransaction_fee_RECURSION(arr,true,money - arr[i],i+1, fee));
+    // }
+
+    // //can only sell the share if you have one
+    // if(haveShare){
+    // profit = Math.max(profit,
+    // BSS_infiniteTransaction_fee_RECURSION(arr,false,money + arr[i] - fee,i+1,
+    // fee));
+    // }
+
+    // // neither buy today nor sell
+    // profit = Math.max(profit,
+    // BSS_infiniteTransaction_fee_RECURSION(arr,haveShare,money,i+1, fee));
+
+    // return profit;
+    // }
+
+    public static int BSS_infiniteTransaction_fee(int arr[], int fee) {
+
+        int bsp = -arr[0];
+        int ssp = 0;
+
+        for (int i = 1; i < arr.length; i++) {
+            if (ssp - arr[i] > bsp)
+                bsp = ssp - arr[i];
+            else if (bsp + arr[i] - fee > ssp)
+                ssp = bsp + arr[i] - fee;
+        }
+
+        return ssp;
+    }
+
+            
 
 }
