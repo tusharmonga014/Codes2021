@@ -1,7 +1,26 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class levelup {
 
     public static void main(String args[]) {
+
+        // int arr[][] = { { 0, 1, 4, 2, 8, 2 }, { 4, 3, 6, 5, 0, 4 }, { 1, 2, 4, 1, 4,
+        // 6 }, { 2, 0, 7, 3, 2, 2 },
+        // { 3, 1, 5, 9, 2, 4 }, { 2, 7, 0, 8, 5, 1 } };
+        // ArrayList<String> ans = minCostPathMaze(arr);
+        // for(String s : ans){
+        // System.out.println(s);
+        // }
+
+        // System.out.println(distinctSubseqII("abcabc"));
+
+        // int arr[] = { 10, 22, 9, 33, 21, 50, 41, 60, 80, 1 };
+        // printAllLIS(arr);
+        
 
     }
 
@@ -145,4 +164,1041 @@ public class levelup {
         return maxCount;
     }
 
+    // No of overlapping bridges
+
+    // https://leetcode.com/problems/russian-doll-envelopes/submissions/
+    public static class Env implements Comparable<Env> {
+        int h;
+        int w;
+
+        Env(int h, int w) {
+            this.h = h;
+            this.w = w;
+        }
+
+        public int compareTo(Env o) {
+            if (this.h != o.h)
+                return this.h - o.h;
+            else
+                return this.w - o.w;
+        }
+    }
+
+    public int russianDollEnvelopes(int[][] envelopes) {
+
+        int n = envelopes.length;
+
+        Env envs[] = new Env[n];
+        for (int i = 0; i < n; i++) {
+            // width -> 0
+            // height -> 1
+            envs[i] = new Env(envelopes[i][1], envelopes[i][0]);
+        }
+
+        Arrays.sort(envs, 0, n);
+
+        int dp[] = new int[n];
+        int max = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            int myMax = 0;
+            for (int j = 0; j < i; j++) {
+                if (envs[i].h != envs[j].h && envs[j].w < envs[i].w) {
+                    if (myMax < dp[j])
+                        myMax = dp[j];
+                }
+            }
+            dp[i] = myMax + 1;
+            if (dp[i] > max) {
+                max = dp[i];
+            }
+        }
+
+        return max;
+    }
+
+    public static int minSquares_memo(int n, int dp[]) {
+        if (n == 0 || n == 1) {
+            return n;
+        }
+
+        if (dp[n] != 0) {
+            return dp[n];
+        }
+
+        int min = n - 1;
+        for (int i = 1; i * i <= n; i++) {
+            min = Math.min(min, minSquares_memo(n - (i * i), dp));
+        }
+
+        return dp[n] = min + 1;
+    }
+
+    static int counter = 0;
+
+    public static int minSquares(int n) {
+
+        int[] dp = new int[n + 1];
+        // dp[0] = 0;
+        // dp[1] = 1;
+        for (int i = 1; i <= n; i++) {
+            int min = i - 1;
+            for (int j = 1; i - (j * j) >= 0; j++) {
+                counter++;
+                if (dp[i - (j * j)] < min)
+                    min = dp[i - (j * j)];
+            }
+            dp[i] = min + 1;
+        }
+
+        return dp[n];
+    }
+
+    // https://leetcode.com/problems/minimum-number-of-removals-to-make-mountain-array/
+    public int minimumMountainRemovals(int[] arr) {
+        int n = arr.length;
+
+        int lis[] = new int[n];
+        for (int i = 0; i < n; i++) {
+            int myMax = 0;
+            for (int j = 0; j < i; j++) {
+                if (arr[j] < arr[i] && lis[j] > myMax) {
+                    myMax = lis[j];
+                }
+            }
+            lis[i] = myMax + 1;
+        }
+
+        int lds[] = new int[n];
+        for (int i = n - 1; i >= 0; i--) {
+            int myMax = 0;
+            for (int j = i + 1; j < n; j++) {
+                if (arr[j] < arr[i] && lds[j] > myMax) {
+                    myMax = lds[j];
+                }
+            }
+            lds[i] = myMax + 1;
+        }
+
+        int maxLen = 0;
+        for (int i = 1; i < arr.length - 1; i++) {
+            if (lis[i] > 1 && lds[i] > 1)
+                maxLen = Math.max(maxLen, lis[i] + lds[i] - 1);
+        }
+
+        return arr.length - maxLen;
+    }
+
+    // Fill the dp with -1 for memoization.
+    public int longestCommonSubsequence_memo(String s1, String s2, int i, int j, int[][] dp) {
+
+        if (i == s1.length() || j == s2.length())
+            return 0;
+
+        if (dp[i][j] != -1)
+            return dp[i][j];
+
+        char c1 = s1.charAt(i);
+        char c2 = s2.charAt(j);
+        // String r1 = s1.substring(i + 1);
+        // String r2 = s2.substring(j + 1);
+
+        int ans = 0;
+
+        if (c1 == c2) {
+
+            ans = 1 + longestCommonSubsequence_memo(s1, s2, i + 1, j + 1, dp);
+
+        } else {
+
+            ans = Math.max(longestCommonSubsequence_memo(s1, s2, i, j + 1, dp),
+                    longestCommonSubsequence_memo(s1, s2, i + 1, j, dp));
+
+        }
+
+        return dp[i][j] = ans;
+    }
+
+    public int longestCommonSubsequence(String s1, String s2) {
+
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+
+        for (int i = 1; i <= s1.length(); i++) {
+            for (int j = 1; j <= s2.length(); j++) {
+
+                char c1 = s1.charAt(i - 1);
+                char c2 = s2.charAt(j - 1);
+
+                if (c1 == c2)
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+
+            }
+        }
+
+        return dp[s1.length()][s2.length()];
+    }
+
+    public int countPalindromicSubstrings(String s) {
+
+        int n = s.length();
+
+        boolean dp[][] = new boolean[n][n];
+
+        int count = 0;
+
+        for (int gap = 0; gap < n; gap++) {
+
+            for (int i = 0, j = gap; j < n; i++, j++) {
+
+                if (gap == 0) {
+                    dp[i][j] = true;
+                    count++;
+                } else if (gap == 1) {
+                    if (s.charAt(i) == s.charAt(j)) {
+                        dp[i][j] = true;
+                        count++;
+                    }
+                } else {
+                    if (s.charAt(i) == s.charAt(j) && dp[i + 1][j - 1]) {
+                        dp[i][j] = true;
+                        count++;
+                    }
+                }
+
+            }
+
+        }
+
+        return count;
+    }
+
+    public int longestPalindromicSubstring(String s) {
+
+        boolean dp[][] = new boolean[s.length()][s.length()];
+
+        int maxLen = 0;
+
+        for (int g = 0; g < s.length(); g++) {
+
+            for (int i = 0, j = g; j < s.length(); i++, j++) {
+
+                if (g == 0) {
+
+                    dp[i][j] = true;
+                    maxLen = g + 1;
+
+                } else if (g == 1) {
+
+                    if (s.charAt(i) == s.charAt(j)) {
+                        dp[i][j] = true;
+                        maxLen = g + 1;
+                    }
+
+                } else {
+
+                    if (s.charAt(i) == s.charAt(j) && dp[i + 1][j - 1]) {
+
+                        dp[i][j] = true;
+                        maxLen = g + 1;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return maxLen;
+    }
+
+    private static class Pair {
+        String psf;
+        int i;
+        int j;
+
+        public Pair(String psf, int i, int j) {
+            this.psf = psf;
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public static ArrayList<String> minCostPathMaze(int[][] arr) {
+        int n = arr.length;
+        int m = arr[0].length;
+
+        int dp[][] = new int[n][m];
+
+        for (int i = n - 1; i >= 0; i--) {
+
+            for (int j = m - 1; j >= 0; j--) {
+
+                if (i == n - 1 && j == m - 1) {
+                    dp[i][j] = arr[i][j];
+                } else if (i == n - 1) {
+                    dp[i][j] = arr[i][j] + dp[i][j + 1];
+                } else if (j == m - 1) {
+                    dp[i][j] = arr[i][j] + dp[i + 1][j];
+                } else {
+                    dp[i][j] = Math.min(dp[i + 1][j], dp[i][j + 1]) + arr[i][j];
+                }
+            }
+        }
+
+        System.out.println(dp[0][0]);
+        ArrayList<String> ans = new ArrayList<>();
+
+        LinkedList<Pair> que = new LinkedList<>();
+
+        que.addFirst(new Pair("", 0, 0));
+
+        while (que.size() != 0) {
+
+            int size = que.size();
+            while (size-- > 0) {
+
+                Pair removed = que.removeFirst();
+
+                if (removed.i == n - 1 && removed.j == m - 1)
+                    ans.add(removed.psf);
+                else if (removed.i == n - 1) {
+                    que.addLast(new Pair(removed.psf + "H", removed.i, removed.j + 1));
+                } else if (removed.j == m - 1) {
+                    que.addLast(new Pair(removed.psf + "V", removed.i + 1, removed.j));
+                } else {
+                    if (dp[removed.i + 1][removed.j] < dp[removed.i][removed.j + 1]) {
+                        que.addLast(new Pair(removed.psf + "V", removed.i + 1, removed.j));
+                    } else if (dp[removed.i + 1][removed.j] > dp[removed.i][removed.j + 1]) {
+                        que.addLast(new Pair(removed.psf + "H", removed.i, removed.j + 1));
+                    } else {
+                        que.addLast(new Pair(removed.psf + "V", removed.i + 1, removed.j));
+                        que.addLast(new Pair(removed.psf + "H", removed.i, removed.j + 1));
+                    }
+                }
+            }
+        }
+
+        // for(String s : ans){
+        // System.out.println(s);
+        // }
+        return ans;
+    }
+
+    public int jumpGame2(int[] arr) {
+
+        int steps = 1;
+        int jump = 0;
+        int maxReach = 0;
+
+        for (int i = 0; i < arr.length - 1; i++) {
+
+            maxReach = Math.max(maxReach, i + arr[i]);
+
+            if (i >= maxReach) {
+                return -1;
+            }
+
+            if (i == arr.length - 1)
+                return jump;
+
+            steps--;
+
+            if (steps == 0) {
+                jump++;
+                steps = maxReach - i;
+            }
+        }
+
+        return jump;
+
+    }
+
+    public static class Pair2 {
+        String psf;
+        int idx;
+
+        Pair2(String psf, int idx) {
+            this.psf = psf;
+            this.idx = idx;
+        }
+    }
+
+    public static void minVarJump_PATH(int arr[]) {
+
+        int n = arr.length;
+
+        Integer dp[] = new Integer[n];
+
+        dp[n - 1] = 0;
+        for (int i = n - 2; i >= 0; i--) {
+
+            int min = Integer.MAX_VALUE;
+            for (int j = 1; j <= arr[i] && i + j < n; j++) {
+                if (dp[i + j] != null && dp[i + j] < min) {
+                    min = dp[i + j];
+                }
+            }
+            if (min != Integer.MAX_VALUE)
+                dp[i] = min + 1;
+        }
+
+        System.out.println(dp[0]);
+        ArrayList<String> ans = new ArrayList<>();
+
+        LinkedList<Pair2> que = new LinkedList<>();
+
+        que.addFirst(new Pair2("0", 0));
+
+        while (que.size() != 0) {
+
+            int size = que.size();
+            while (size-- > 0) {
+
+                Pair2 rem = que.removeFirst();
+
+                if (rem.idx == n - 1) {
+                    ans.add(rem.psf + " .");
+                }
+
+                else {
+                    for (int j = 1; j <= arr[rem.idx] && j + rem.idx < n; j++) {
+                        if (dp[rem.idx + j] != null && dp[rem.idx + j] == dp[rem.idx] - 1) {
+                            que.addLast(new Pair2(rem.psf + " -> " + (rem.idx + j), rem.idx + j));
+                        }
+                    }
+                }
+
+            }
+        }
+
+        for (String s : ans) {
+            System.out.println(s);
+        }
+
+    }
+
+    public static int distinctSubseqII(String s) {
+
+        int[] dp = new int[s.length() + 1];
+
+        int lastocc[] = new int[26];
+        Arrays.fill(lastocc, -1);
+
+        dp[0] = 1;
+        for (int i = 1; i <= s.length(); i++) {
+
+            dp[i] = (dp[i - 1] * 2);
+
+            if (lastocc[s.charAt(i - 1) - 'a'] != -1) {
+                int prevIdxInString = lastocc[s.charAt(i - 1) - 'a'] - 1;
+                dp[i] -= dp[prevIdxInString];
+            }
+
+            lastocc[s.charAt(i - 1) - 'a'] = i;
+        }
+
+        return dp[s.length()] - 1;
+    }
+
+    // leetcode 940
+    public int distinctSubseqII_mod(String s) {
+
+        int mod = 1000000007;
+
+        int[] dp = new int[s.length() + 1];
+        int lastocc[] = new int[26];
+        Arrays.fill(lastocc, -1);
+
+        dp[0] = 1;
+        for (int i = 1; i <= s.length(); i++) {
+
+            dp[i] = (2 * dp[i - 1]) % mod;
+
+            if (lastocc[s.charAt(i - 1) - 'a'] != -1) {
+                int prevIdxInString = lastocc[s.charAt(i - 1) - 'a'] - 1;
+                dp[i] = (dp[i] - dp[prevIdxInString] + mod) % mod;
+            }
+
+            lastocc[s.charAt(i - 1) - 'a'] = i;
+        }
+
+        return dp[s.length()] - 1;
+    }
+
+    // Space Optimized-------------
+
+    // Space : O(unique chars)
+
+    public static long distinctSubseqII_opti(String s) {
+
+        long[] dp = new long[26];
+
+        // int lastocc[] = new int[26];
+        // Arrays.fill(lastocc, -1);
+
+        long prev = 1;
+        long curr = 0;
+        for (int i = 0; i < s.length(); i++) {
+
+            curr = (prev * 2);
+
+            if (dp[s.charAt(i) - 'a'] != 0) {
+                curr -= dp[s.charAt(i) - 'a'];
+            }
+
+            dp[s.charAt(i) - 'a'] = prev;
+
+            prev = curr;
+        }
+
+        // -1 for empty subsequence
+        return curr - 1;
+    }
+
+    // leetcode 940
+    public int distinctSubseqII_mod_opti(String s) {
+
+        int mod = (int) 1e9 + 7;
+
+        int[] dp = new int[26];
+
+        // int lastocc[] = new int[26];
+        // Arrays.fill(lastocc, -1);
+
+        int p = 1;
+        int curr = 0;
+        for (int i = 0; i < s.length(); i++) {
+
+            curr = (p * 2) % mod;
+
+            if (dp[s.charAt(i) - 'a'] != 0) {
+                curr = (curr - dp[s.charAt(i) - 'a'] + mod) % mod;
+            }
+
+            dp[s.charAt(i) - 'a'] = p;
+
+            p = curr;
+        }
+
+        return curr - 1;
+    }
+
+    private static class Pair3 {
+        int idx;
+        String psf;
+
+        Pair3(String psf, int idx) {
+            this.psf = psf;
+            this.idx = idx;
+        }
+    }
+
+    public static void printAllLIS(int[] arr) {
+
+        int n = arr.length;
+        int[] dp = new int[n];
+
+        int maxLen = 0;
+        for (int i = 0; i < n; i++) {
+
+            int myAns = 0;
+            for (int j = 0; j < i; j++) {
+                if (arr[i] > arr[j] && dp[j] > myAns) {
+                    myAns = dp[j];
+                }
+            }
+            dp[i] = myAns + 1;
+            if (dp[i] > maxLen) {
+                maxLen = dp[i];
+            }
+        }
+
+        System.out.println(maxLen);
+
+        LinkedList<Pair3> que = new LinkedList<>();
+
+        for (int i = 0; i < n; i++) {
+            if (dp[i] == maxLen) {
+                que.addLast(new Pair3(arr[i] + "", i));
+            }
+        }
+
+        while (que.size() != 0) {
+
+            int size = que.size();
+            while (size-- > 0) {
+
+                Pair3 rem = que.removeFirst();
+
+                if (dp[rem.idx] == 1) {
+                    System.out.println(rem.psf);
+                }
+
+                for (int j = 0; j < rem.idx; j++) {
+                    if (arr[rem.idx] > arr[j] && dp[j] == dp[rem.idx] - 1) {
+                        que.addLast(new Pair3(arr[j] + " -> " + rem.psf, j));
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    public static int countPallindromicSubsequences(String s) {
+
+        int[][] dp = new int[s.length()][s.length()];
+
+        for (int gap = 0; gap < s.length(); gap++) {
+            for (int i = 0, j = gap; j < s.length(); i++, j++) {
+                if (gap == 0) {
+                    dp[i][j] = 1;
+                } else if (gap == 1) {
+                    if (s.charAt(i) == s.charAt(j))
+                        dp[i][j] = 3;
+                    else
+                        dp[i][j] = 2;
+                } else {
+                    if (s.charAt(i) == s.charAt(j)) {
+                        dp[i][j] = dp[i][j - 1] + dp[i + 1][j] + 1;
+                    } else {
+                        dp[i][j] = dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1];
+                    }
+                }
+            }
+        }
+
+        return dp[0][s.length() - 1];
+    }
+
+    // Count Vowel Permutations - leetcode 1220
+
+    /*
+     * 0 = a 1 = e 2 = i 3 = o 4 = u
+     */
+
+    // Recursive memoized
+    // -----------------------------------------------------------------------------------
+    public int countVowelPermutation_memo(int n) {
+
+        int mod = 1000000007;
+
+        int count = 0;
+        int[][] dp = new int[n + 1][5];
+        for (int i = 0; i < 5; i++)
+            count = (count + countVowelPermutation_memo__(n, 1, i, dp)) % mod;
+        return count;
+
+    }
+
+    public int countVowelPermutation_memo__(int n, int i, int ch, int dp[][]) {
+        int mod = 1000000007;
+
+        if (i == n) {
+            return dp[i][ch] = 1;
+        }
+
+        if (dp[i][ch] != 0) {
+            return dp[i][ch];
+        }
+
+        int count = 0;
+
+        if (ch == 0) {
+            count = (count + countVowelPermutation_memo__(n, i + 1, 1, dp)) % mod;
+        } else if (ch == 1) {
+            count = (count + countVowelPermutation_memo__(n, i + 1, 0, dp)) % mod;
+            count = (count + countVowelPermutation_memo__(n, i + 1, 2, dp)) % mod;
+        } else if (ch == 2) {
+            count = (count + countVowelPermutation_memo__(n, i + 1, 0, dp)) % mod;
+            count = (count + countVowelPermutation_memo__(n, i + 1, 1, dp)) % mod;
+            count = (count + countVowelPermutation_memo__(n, i + 1, 3, dp)) % mod;
+            count = (count + countVowelPermutation_memo__(n, i + 1, 4, dp)) % mod;
+        } else if (ch == 3) {
+            count = (count + countVowelPermutation_memo__(n, i + 1, 2, dp)) % mod;
+            count = (count + countVowelPermutation_memo__(n, i + 1, 4, dp)) % mod;
+        } else {
+            count = (count + countVowelPermutation_memo__(n, i + 1, 0, dp)) % mod;
+        }
+
+        return dp[i][ch] = count;
+    }
+
+    // ---------------------------------------------------------------------
+    // Tabulation Space : O(1) -- constant**
+    // --------------------------------------------------------------------
+
+    public int countVowelPermutation_TAB(int n) {
+
+        int prev[] = new int[5];
+        int curr[] = new int[5];
+
+        int mod = (int) 1e9 + 7;
+
+        for (int i = 1; i <= n; i++) {
+            for (int ch = 0; ch < curr.length; ch++) {
+
+                if (i == 1) {
+
+                    curr[ch] = 1;
+
+                } else {
+
+                    if (ch == 0) { // a - > e
+                        curr[ch] = prev[1];
+                    } else if (ch == 1) { // e - > a, i
+                        curr[ch] = (prev[0] + prev[2]) % mod;
+                    } else if (ch == 2) { // i - > a, e, o, u
+                        curr[ch] = (prev[0] + prev[1] + prev[3] + prev[4]) % mod;
+                    } else if (ch == 3) { // o - > i, u
+                        curr[ch] = (prev[2] + prev[4]) % mod;
+                    } else { // u - > a
+                        curr[ch] = prev[0];
+                    }
+
+                }
+                // don't update here!
+                // **WRONG prev[ch] = curr[ch]; **WRONG
+
+            }
+
+            for (int ch = 0; ch < curr.length; ch++) {
+                prev[ch] = curr[ch];
+            }
+        }
+
+        int sum = 0;
+        for (int i = 0; i < curr.length; i++)
+            sum = (sum + curr[i]) % mod;
+
+        return sum;
+
+    }
+
+    public int countVowelPermutation_TAB_mod(int n) {
+
+        int prev[] = new int[5];
+        int curr[] = new int[5];
+
+        int mod = (int) 1e9 + 7;
+
+        for (int i = 1; i <= n; i++) {
+            for (int ch = 0; ch < curr.length; ch++) {
+
+                if (i == 1) {
+
+                    curr[ch] = 1;
+
+                } else {
+
+                    if (ch == 0) { // a - > e
+                        curr[ch] = prev[1];
+                    } else if (ch == 1) { // e - > a, i
+                        curr[ch] = (prev[0] + prev[2]) % mod;
+                    } else if (ch == 2) { // i - > a, e, o, u
+                        curr[ch] = (((prev[0] + prev[1]) % mod) + ((prev[3] + prev[4]) % mod)) % mod;
+                    } else if (ch == 3) { // o - > i, u
+                        curr[ch] = (prev[2] + prev[4]) % mod;
+                    } else { // u - > a
+                        curr[ch] = prev[0];
+                    }
+
+                }
+
+                // not here
+                // **WRONG prev[ch] = curr[ch]; **WRONG
+
+            }
+
+            for (int ch = 0; ch < curr.length; ch++) {
+                prev[ch] = curr[ch];
+            }
+        }
+
+        int sum = 0;
+        for (int i = 0; i < curr.length; i++)
+            sum = (sum + curr[i]) % mod;
+
+        return sum;
+
+    }
+
+    // -------------------------------------------------------------------------
+
+    private static class Pair4 {
+        String psf;
+        int i;
+        int j;
+
+        public Pair4(String psf, int i, int j) {
+            this.psf = psf;
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public static void maxGoldSumAllPath(int[][] arr) {
+
+        int n = arr.length;
+        int m = arr[0].length;
+        int[][] dp = new int[n][m];
+
+        for (int j = m - 1; j >= 0; j--) {
+            for (int i = 0; i < n; i++) {
+                if (j == m - 1) {
+                    dp[i][j] = arr[i][j];
+                } else {
+                    if (i == 0) {
+                        dp[i][j] = arr[i][j] + Math.max(dp[i][j + 1], dp[i + 1][j + 1]);
+                    } else if (i == n - 1) {
+                        dp[i][j] = arr[i][j] + Math.max(dp[i - 1][j + 1], dp[i][j + 1]);
+                    } else {
+                        dp[i][j] = arr[i][j] + Math.max(Math.max(dp[i - 1][j + 1], dp[i][j + 1]), dp[i + 1][j + 1]);
+                    }
+                }
+            }
+        }
+
+        int max = 0;
+        for (int i = 0; i < dp.length; i++) {
+            if (dp[i][0] > max)
+                max = dp[i][0];
+        }
+
+        System.out.println(max);
+
+        LinkedList<Pair4> que = new LinkedList<>();
+
+        for (int i = 0; i < dp.length; i++) {
+            if (dp[i][0] == max) {
+                que.addLast(new Pair4(i + "", i, 0));
+            }
+        }
+
+        while (que.size() != 0) {
+
+            int size = que.size();
+            while (size-- > 0) {
+
+                Pair4 rem = que.removeFirst();
+
+                if (rem.j == m - 1) {
+                    System.out.println(rem.psf);
+                } else {
+
+                    if (rem.i == 0) {
+
+                        int myMax = Math.max(dp[rem.i][rem.j + 1], dp[rem.i + 1][rem.j + 1]);
+
+                        if (myMax == dp[rem.i][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d2", rem.i, rem.j + 1));
+                        if (myMax == dp[rem.i + 1][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d3", rem.i + 1, rem.j + 1));
+
+                    } else if (rem.i == n - 1) {
+
+                        int myMax = Math.max(dp[rem.i - 1][rem.j + 1], dp[rem.i][rem.j + 1]);
+
+                        if (myMax == dp[rem.i - 1][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d1", rem.i - 1, rem.j + 1));
+                        if (myMax == dp[rem.i][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d2", rem.i, rem.j + 1));
+
+                    } else {
+
+                        int myMax = Math.max(Math.max(dp[rem.i - 1][rem.j + 1], dp[rem.i][rem.j + 1]),
+                                dp[rem.i + 1][rem.j + 1]);
+
+                        if (myMax == dp[rem.i - 1][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d1", rem.i - 1, rem.j + 1));
+                        if (myMax == dp[rem.i][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d2", rem.i, rem.j + 1));
+                        if (myMax == dp[rem.i + 1][rem.j + 1])
+                            que.addLast(new Pair4(rem.psf + " d3", rem.i + 1, rem.j + 1));
+
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    public static class Pair5 {
+        int i;
+        int j;
+        String psf;
+
+        public Pair5(String psf, int i, int j) {
+            this.i = i;
+            this.j = j;
+            this.psf = psf;
+        }
+    }
+
+    public static void targetSumSubsetAllResults(int[] arr, int tar) {
+
+        boolean[][] dp = new boolean[arr.length + 1][tar + 1];
+
+        for (int i = 0; i < dp.length; i++) {
+            for (int t = 0; t <= tar; t++) {
+                if (i == 0 && t == 0) {
+                    dp[i][t] = true;
+                } else if (i == 0) {
+                    dp[i][t] = false;
+                } else if (t == 0) {
+                    dp[i][t] = true;
+                } else {
+                    int val = arr[i - 1];
+                    if (t - val >= 0) {
+                        dp[i][t] = dp[i - 1][t] || dp[i - 1][t - val];
+                    } else {
+                        dp[i][t] = dp[i - 1][t];
+                    }
+                }
+            }
+        }
+
+        if (dp[arr.length][tar])
+            System.out.println("true");
+        else
+            System.out.println("false");
+
+        LinkedList<Pair5> que = new LinkedList<>();
+        if (dp[dp.length - 1][tar]) {
+            que.addFirst(new Pair5("", dp.length - 1, tar));
+        }
+
+        while (que.size() != 0) {
+
+            Pair5 rem = que.removeLast();
+
+            if (rem.j == 0) {
+
+                System.out.println(rem.psf);
+                continue;
+
+            } else {
+
+                if (rem.j - arr[rem.i - 1] >= 0 && dp[rem.i - 1][rem.j - arr[rem.i - 1]]) {
+                    que.addFirst(new Pair5((rem.i - 1) + " " + rem.psf, rem.i - 1, rem.j - arr[rem.i - 1]));
+                }
+
+                if (dp[rem.i - 1][rem.j]) {
+                    que.addFirst(new Pair5(rem.psf, rem.i - 1, rem.j));
+                }
+            }
+        }
+
+    }
+
+    private static class Pair6 {
+        int i;
+        int t;
+        String psf;
+
+        public Pair6(int i, int t, String psf) {
+            this.i = i;
+            this.t = t;
+            this.psf = psf;
+        }
+    }
+
+    public static void zero_One_Knapsack_All_Results(int[] values, int[] wts, int cap) {
+
+        int[][] dp = new int[values.length + 1][cap + 1];
+
+        for (int i = 1; i < dp.length; i++) {
+            for (int t = 1; t <= cap; t++) {
+                if (t - wts[i - 1] >= 0) {
+                    dp[i][t] = Math.max(dp[i - 1][t - wts[i - 1]] + values[i - 1], dp[i - 1][t]);
+                } else {
+                    dp[i][t] = dp[i - 1][t];
+                }
+            }
+        }
+
+        System.out.println(dp[dp.length - 1][cap]);
+
+        LinkedList<Pair6> que = new LinkedList<>();
+        que.add(new Pair6(dp.length - 1, cap, ""));
+
+        while (que.size() != 0) {
+            Pair6 rem = que.removeFirst();
+
+            if (rem.t == 0 || rem.i == 0) {
+                System.out.println(rem.psf);
+                continue;
+            }
+
+            int i = rem.i;
+            int t = rem.t;
+            int val = values[rem.i - 1];
+            int wt = wts[rem.i - 1];
+
+            if (t - wt >= 0 && dp[i - 1][t - wt] + val >= 0) {
+                if (dp[i - 1][t - wt] + val > dp[i - 1][t]) {
+                    que.addLast(new Pair6(i - 1, t - wt, (i - 1) + " " + rem.psf));
+                } else if (dp[i - 1][t - wt] + val < dp[i - 1][t]) {
+                    que.addLast(new Pair6(i - 1, t, rem.psf));
+                } else {
+                    que.addLast(new Pair6(i - 1, t - wt, (i - 1) + " " + rem.psf));
+                    que.addLast(new Pair6(i - 1, t, rem.psf));
+                }
+            } else {
+                que.addLast(new Pair6(i - 1, t, rem.psf));
+            }
+        }
+    }
+
+    public static void zero_One_Knapsack_All_Results__ALTERNATIVE(int[] values, int[] wts, int cap) {
+
+        int[][] dp = new int[values.length + 1][cap + 1];
+
+        for (int i = 1; i < dp.length; i++) {
+            for (int t = 1; t <= cap; t++) {
+                if (t - wts[i - 1] >= 0) {
+                    dp[i][t] = Math.max(dp[i - 1][t - wts[i - 1]] + values[i - 1], dp[i - 1][t]);
+                } else {
+                    dp[i][t] = dp[i - 1][t];
+                }
+            }
+        }
+
+        System.out.println(dp[dp.length - 1][cap]);
+
+        LinkedList<Pair6> que = new LinkedList<>();
+        que.add(new Pair6(dp.length - 1, cap, ""));
+
+        while (que.size() != 0) {
+            Pair6 rem = que.removeFirst();
+
+            if (rem.t == 0 || rem.i == 0) {
+                System.out.println(rem.psf);
+                continue;
+            }
+
+            int i = rem.i;
+            int t = rem.t;
+            int val = values[rem.i - 1];
+            int wt = wts[rem.i - 1];
+
+            if (t - wt >= 0) {
+                int inc = dp[i - 1][t - wt] + val;
+                if (dp[i][t] == inc) {
+                    que.addLast(new Pair6(i - 1, t - wt, (i - 1) + " " + rem.psf));
+                }
+            }
+
+            int exc = dp[i - 1][t];
+            if (dp[i][t] == exc) {
+                que.addLast(new Pair6(i - 1, t, rem.psf));
+            }
+        }
+    }
+    
 }

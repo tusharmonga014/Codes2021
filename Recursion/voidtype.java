@@ -1333,50 +1333,56 @@ public class voidtype {
         return st.size();
     }
 
-    static String max;
-
-    public static String swap(String str, int i, int j) {
-        String ith = str.substring(i, i + 1);
-        String jth = str.substring(j, j + 1);
-
-        String left = str.substring(0, i);
-        String mid = str.substring(i + 1, j);
-        String right = str.substring(j + 1, str.length());
-
-        return left + jth + mid + ith + right;
+    public static String swap( String str, int i ,int j){
+        
+        String left = str.substring(0,i);
+        String mid = str.substring(i+1,j);
+        String right = str.substring(j+1, str.length());
+        
+        return left + str.charAt(j) + mid + str.charAt(i) + right;
+        
     }
 
-    public static void findMaximum(String str, int k, int i) {
-        if (k == 0 || i == str.length()) {
-            return;
-        }
-
-        int max_ = str.charAt(i);
-
-        for (int j = i + 1; j < str.length(); j++) {
-            if (max_ < str.charAt(j)) {
-                max_ = str.charAt(j);
-            }
-        }
-
-        if (max_ == str.charAt(i))
-            findMaximum(str, k, i + 1);
-        else {
-
-            k--;
-
-            for (int j = i + 1; j < str.length(); j++) {
-                if (max_ == str.charAt(j)) {
-                    String swapped = swap(str, i, j);
-
-                    if (swapped.compareTo(max) > 0)
-                        max = swapped;
-
-                    findMaximum(swapped, k, i + 1);
-                }
-            }
-        }
-
-    }
+	static String max;
+	public static void findMaximum(String str, int k, int i) {
+		if(i==str.length()-1 || k==0){
+		    
+		    if(str.compareTo(max)>0) // VIMP
+		        max=str;
+                		    
+		    return;
+		    
+		}
+		
+		int lmax = str.charAt(i) - '0';
+		ArrayList<Integer> pos = new ArrayList<>();
+		
+		for(int j = i + 1; j < str.length(); j++){
+		    
+		    if(lmax <= str.charAt(j) - '0'){
+		        lmax = str.charAt(j) - '0';
+		    }
+		}
+		
+		for(int j = i + 1; j < str.length(); j++){
+		    
+		    if(lmax == str.charAt(j) - '0'){
+		        pos.add(j);
+		    }
+		}
+		
+		if(lmax!=str.charAt(i)-'0'){
+		    
+		    for(int posi = 0;posi<pos.size();posi++){
+		        String swapped = swap(str,i,pos.get(posi));
+		        findMaximum(swapped,k-1, i+1);
+		    }
+		    
+		} else {
+		    findMaximum(str,k,i+1);
+		}
+		
+		
+	}
 
 }
