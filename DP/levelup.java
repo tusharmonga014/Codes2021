@@ -20,7 +20,6 @@ public class levelup {
 
         // int arr[] = { 10, 22, 9, 33, 21, 50, 41, 60, 80, 1 };
         // printAllLIS(arr);
-        
 
     }
 
@@ -1200,5 +1199,40 @@ public class levelup {
             }
         }
     }
-    
+
+    public static int minPalindromicCut(String s) {
+        boolean dp[][] = new boolean[s.length()][s.length()];
+
+        for (int g = 0; g < s.length(); g++) {
+            for (int i = 0, j = g; j < s.length(); i++, j++) {
+                if (g == 0) {
+                    dp[i][j] = true;
+                } else if (g == 1) {
+                    dp[i][j] = s.charAt(i) == s.charAt(j);
+                } else {
+                    dp[i][j] = s.charAt(i) == s.charAt(j) && dp[i + 1][j - 1];
+                }
+            }
+        }
+
+        int ndp[] = new int[s.length()];
+        for (int j = 1; j < s.length(); j++) {
+            if (dp[0][j]) {
+                ndp[j] = 0;
+            } else {
+                int min = Integer.MAX_VALUE;
+                for (int i = j; i >= 0; i--) {
+                    if (dp[i][j]) {
+                        // compare only rest of the string as suffix has 0 cuts
+                        min = Math.min(min, ndp[i - 1]);
+                    }
+                }
+                // do + 1 for cut betweeen suffix and rest of the string
+                ndp[j] = min + 1;
+            }
+        }
+
+        return ndp[s.length() - 1];
+    }
+
 }
