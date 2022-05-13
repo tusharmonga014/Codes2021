@@ -1235,18 +1235,17 @@ public class levelup {
         return ndp[s.length() - 1];
     }
 
-    public static int matrixMultiplication(int N, int arr[])
-    {
+    public static int matrixMultiplication(int N, int arr[]) {
         int dp[][] = new int[N - 1][N - 1];
-        for(int g = 0; g < N - 1; g++) {
-            for(int i = 0, j = g; j < N - 1; i++, j++) {
-                if(g == 0) {
+        for (int g = 0; g < N - 1; g++) {
+            for (int i = 0, j = g; j < N - 1; i++, j++) {
+                if (g == 0) {
                     dp[i][j] = 0;
-                } else if(g == 1) {
+                } else if (g == 1) {
                     dp[i][j] = arr[i] * arr[i + 1] * arr[j + 1];
                 } else {
                     int min = Integer.MAX_VALUE;
-                    for(int k = i; k < j; k++) {
+                    for (int k = i; k < j; k++) {
                         int l = dp[i][k];
                         int r = dp[k + 1][j];
                         int m = arr[i] * arr[k + 1] * arr[j + 1];
@@ -1257,6 +1256,41 @@ public class levelup {
             }
         }
         return dp[0][N - 1 - 1];
+    }
+
+    public static int booleanParenthisization(String str1, String str2) {
+        int dp[][][] = new int[str1.length()][str1.length()][2];
+        // 0 -> count of true
+        // 1 -> count of false
+
+        for (int g = 0; g < str1.length(); g++) {
+            for (int i = 0, j = g; j < str1.length(); i++, j++) {
+                if (g == 0) {
+                    char ch = str1.charAt(i);
+                    dp[i][j][0] = ch == 'T' ? 1 : 0;
+                    dp[i][j][1] = ch == 'F' ? 1 : 0;
+                } else {
+                    for (int k = i; k < j; k++) {
+                        char op = str2.charAt(k);
+                        int leftT = dp[i][k][0];
+                        int leftF = dp[i][k][1];
+                        int rightT = dp[k + 1][j][0];
+                        int rightF = dp[k + 1][j][1];
+                        if (op == '&') {
+                            dp[i][j][0] += leftT * rightT;
+                            dp[i][j][1] += (leftT * rightF) + (leftF * rightT) + (leftF * rightF);
+                        } else if (op == '|') {
+                            dp[i][j][0] += (leftT * rightF) + (leftF * rightT) + (leftT * rightT);
+                            dp[i][j][1] += leftF * rightF;
+                        } else {
+                            dp[i][j][0] += (leftT * rightF) + (leftF * rightT);
+                            dp[i][j][1] += (leftT * rightT) + (leftF * rightF);
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][str1.length() - 1][0];
     }
 
 }
