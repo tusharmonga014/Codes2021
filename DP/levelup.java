@@ -1294,34 +1294,67 @@ public class levelup {
     }
 
     private static void optimalbst(int[] keys, int[] frequency, int n) {
-		int preSum[] = new int[keys.length];
-		preSum[0] = frequency[0];
-		for(int i = 1; i < keys.length; i++) {
-			preSum[i] += preSum[i - 1] + frequency[i];
-		}
-    	int [][]dp = new int[keys.length][keys.length];
-		for(int g = 0; g < keys.length; g++) {
-			for(int i = 0, j = g; j < keys.length; i++, j++) {
-				if(g == 0) {
-					dp[i][j] = frequency[i];
-				} else if(g == 1) {
-					int ith = frequency[i];
-					int jth = frequency[j];
-					dp[i][j] = Math.min(ith + (2 * jth), jth + (2 * ith)); 
-				} else {
-					int fs = preSum[j] - (i == 0 ? 0 : preSum[i - 1]);
-					int min = Integer.MAX_VALUE;
-					for(int k = i; k <= j; k++) {
-						int left = k == i ? 0 : dp[i][k - 1];
-						int right = k == j ? 0 : dp[k + 1][j];
-						int cur = left + right + fs;
-						min = Math.min(min, cur);
-					}
-					dp[i][j] = min;
-				}
-			}
-		}
-		System.out.println(dp[0][keys.length - 1]);
-	}
+        int preSum[] = new int[keys.length];
+        preSum[0] = frequency[0];
+        for (int i = 1; i < keys.length; i++) {
+            preSum[i] += preSum[i - 1] + frequency[i];
+        }
+        int[][] dp = new int[keys.length][keys.length];
+        for (int g = 0; g < keys.length; g++) {
+            for (int i = 0, j = g; j < keys.length; i++, j++) {
+                if (g == 0) {
+                    dp[i][j] = frequency[i];
+                } else if (g == 1) {
+                    int ith = frequency[i];
+                    int jth = frequency[j];
+                    dp[i][j] = Math.min(ith + (2 * jth), jth + (2 * ith));
+                } else {
+                    int fs = preSum[j] - (i == 0 ? 0 : preSum[i - 1]);
+                    int min = Integer.MAX_VALUE;
+                    for (int k = i; k <= j; k++) {
+                        int left = k == i ? 0 : dp[i][k - 1];
+                        int right = k == j ? 0 : dp[k + 1][j];
+                        int cur = left + right + fs;
+                        min = Math.min(min, cur);
+                    }
+                    dp[i][j] = min;
+                }
+            }
+        }
+        System.out.println(dp[0][keys.length - 1]);
+    }
+
+    public int burstBalloons(int[] nums) {
+        int dp[][] = new int[nums.length][nums.length];
+        for (int g = 0; g < nums.length; g++) {
+            for (int i = 0, j = g; j < nums.length; i++, j++) {
+                if (g == 0) {
+                    // i == j
+                    int balloonOnLeft = (i == 0 ? 1 : nums[i - 1]);
+                    int balloonOnRight = (i == nums.length - 1 ? 1 : nums[i + 1]);
+                    dp[i][i] = balloonOnLeft * nums[i] * balloonOnRight;
+                } else if (g == 1) {
+                    int balloonOnLeft = (i == 0 ? 1 : nums[i - 1]);
+                    int balloonOnRight = (j == nums.length - 1 ? 1 : nums[j + 1]);
+                    int c1 = (balloonOnLeft * nums[i] * balloonOnRight) + dp[i + 1][j];
+                    int c2 = dp[i][j - 1] + (balloonOnLeft * nums[j] * balloonOnRight);
+                    dp[i][j] = Math.max(c1, c2);
+                } else {
+                    int max = Integer.MIN_VALUE;
+                    for (int k = i; k <= j; k++) {
+                        int balloonOnLeft = (i == 0 ? 1 : nums[i - 1]);
+                        int balloonOnRight = (j == nums.length - 1 ? 1 : nums[j + 1]);
+                        int leftAns = k == i ? 0 : dp[i][k - 1];
+                        int rightAns = k == j ? 0 : dp[k + 1][j];
+                        int c = leftAns + (balloonOnLeft * nums[k] * balloonOnRight) + rightAns;
+                        max = Math.max(max, c);
+                    }
+                    dp[i][j] = max;
+                }
+            }
+        }
+
+        return dp[0][nums.length - 1];
+    }
 
 }
