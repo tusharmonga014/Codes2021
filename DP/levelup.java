@@ -1293,4 +1293,35 @@ public class levelup {
         return dp[0][str1.length() - 1][0];
     }
 
+    private static void optimalbst(int[] keys, int[] frequency, int n) {
+		int preSum[] = new int[keys.length];
+		preSum[0] = frequency[0];
+		for(int i = 1; i < keys.length; i++) {
+			preSum[i] += preSum[i - 1] + frequency[i];
+		}
+    	int [][]dp = new int[keys.length][keys.length];
+		for(int g = 0; g < keys.length; g++) {
+			for(int i = 0, j = g; j < keys.length; i++, j++) {
+				if(g == 0) {
+					dp[i][j] = frequency[i];
+				} else if(g == 1) {
+					int ith = frequency[i];
+					int jth = frequency[j];
+					dp[i][j] = Math.min(ith + (2 * jth), jth + (2 * ith)); 
+				} else {
+					int fs = preSum[j] - (i == 0 ? 0 : preSum[i - 1]);
+					int min = Integer.MAX_VALUE;
+					for(int k = i; k <= j; k++) {
+						int left = k == i ? 0 : dp[i][k - 1];
+						int right = k == j ? 0 : dp[k + 1][j];
+						int cur = left + right + fs;
+						min = Math.min(min, cur);
+					}
+					dp[i][j] = min;
+				}
+			}
+		}
+		System.out.println(dp[0][keys.length - 1]);
+	}
+
 }
