@@ -3,6 +3,7 @@ public class questions {
     public class Node {
         int val;
         Node next = null;
+        Node random;
 
         Node(int val) {
             this.val = val;
@@ -413,4 +414,128 @@ public class questions {
             return head;
         }
     }
+
+    public void unfold(ListNode head) {
+        
+        if(head == null || head.next == null || head.next.next == null) return;
+        
+        ListNode cur1 = head;
+        ListNode head2 = head.next;
+        ListNode cur2 = head2;
+        
+        while(cur1.next != null && cur2.next != null) {
+            cur1.next = cur2.next;
+            cur2.next = cur1.next.next;
+            
+            cur1 = cur1.next;
+            cur2 = cur2.next;
+        }
+        
+        head2 = reverse(head2);
+        cur1.next = head2;
+    }
+
+    public Node copyRandomList(Node head) {
+        if(head == null) {
+            return null;
+        }
+        
+        Node cur = head;
+        while(cur != null) {
+            Node node = new Node(cur.val);
+            node.next = cur.next;
+            cur.next = node;
+            
+            cur = cur.next.next;
+        }
+        
+        cur = head;
+        while(cur != null) {
+            cur.next.random = cur.random == null ? null : cur.random.next;
+            cur = cur.next.next;
+        }
+        
+        Node head2 = null;
+        Node tail2 = null;
+        
+        cur = head;
+        while(cur != null) {
+            Node cur2 = cur.next;
+            cur.next = cur.next.next;
+            
+            if(head2 == null) {
+                head2 = cur2;
+                tail2 = cur2;
+            } else {
+                tail2.next = cur2;
+                tail2 = tail2.next;
+            }
+            
+            cur = cur.next;
+        }
+        
+        return head2;
+    }
+
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(-1);
+        ListNode ans = dummy;
+        
+        int carry = 0;
+        while(carry > 0 || l1 != null || l2 != null) {
+            int sum = carry + (l1 == null ? 0 : l1.val) + (l2 == null ? 0 : l2.val);
+            int toAdd = sum % 10;
+            carry = sum / 10;
+            ListNode addNode = new ListNode(toAdd);
+            ans.next = addNode;
+            ans = ans.next;
+            
+            l1 = l1 == null ? null :  l1.next;
+            l2 = l2 == null ? null : l2.next;
+        }
+        
+        return dummy.next;
+    }
+
+    public ListNode multiplyWithOneDigit(ListNode l1, int digit) {
+        ListNode dummy = new ListNode(-1);
+        ListNode ansItr = dummy;
+        int carry = 0;
+        
+        while(l1 != null || carry > 0) {
+            int mul = ((l1 == null ? 0 : l1.val) * digit) + carry;
+            int toAdd = mul % 10;
+            carry = mul / 10;
+            
+            ansItr.next = new ListNode(toAdd);
+            ansItr = ansItr.next;
+            
+            l1 = l1 == null ? null : l1.next;
+        }
+        
+        return dummy.next;
+    }
+
+    public ListNode multiplyTwoLL(ListNode l1, ListNode l2) {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        
+        ListNode dummy = new ListNode(-1);
+        ListNode ansItr = dummy;
+        
+        l1 = reverse(l1);
+        l2 = reverse(l2);
+        
+        while(l2 != null) {
+            ListNode mul = multiplyWithOneDigit(l1, l2.val);
+            ansItr.next = addTwoNumbers(ansItr.next, mul);
+            
+            ansItr = ansItr.next;
+            l2 = l2.next;
+        }
+        
+        return reverse(dummy.next);
+    }
+
+    
 }
