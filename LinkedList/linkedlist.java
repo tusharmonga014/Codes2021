@@ -223,4 +223,31 @@ public class linkedlist<K> {
             ei--;
         }
     }
+
+    public void reverseDataITR_ON() {
+        if (this.isEmpty())
+            return;
+        Node slow = this.head;
+        Node fast = this.head;
+        while (fast!= null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        Node mid = slow;
+        Node thead1 = this.head;
+        Node thead2 = mid;
+        thead2 = this.reverseList(thead2);
+
+        Node cur1 = thead1;
+        Node cur2 = thead2;
+        while (cur2 != null) {
+            K temp = cur1.data;
+            cur1.data = cur2.data;
+            cur2.data = temp;
+            cur1 = cur1.next;
+            cur2 = cur2.next;
+        }
+
+        thead2 = reverseList(thead2);
+    }
 }
