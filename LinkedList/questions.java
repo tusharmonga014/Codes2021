@@ -2,11 +2,13 @@
 public class questions {
     public class Node {
         int val;
+        int data;
         Node next = null;
         Node random;
 
         Node(int val) {
             this.val = val;
+            this.data = val;
         }
     }
 
@@ -331,45 +333,45 @@ public class questions {
     public int length(ListNode head) {
         ListNode cur = head;
         int count = 1;
-        while(cur.next != null) {
+        while (cur.next != null) {
             cur = cur.next;
             count++;
         }
         return count;
     }
-    
+
     public ListNode reverseKGroup(ListNode head, int k) {
-        if(head == null || k == 1)
+        if (head == null || k == 1)
             return head;
-        
+
         int len = length(head);
-        
+
         ListNode h = null;
         ListNode t = null;
-        
-        if(k > len) {
+
+        if (k > len) {
             return head;
         }
-        
+
         ListNode cur = head;
-        
-        while(len >= k) {
+
+        while (len >= k) {
             ListNode tt = cur;
             ListNode forw = null;
             ListNode prev = t;
-            
+
             int tempk = k;
-            
-            while(tempk-- > 0) {
+
+            while (tempk-- > 0) {
                 forw = cur.next;
                 cur.next = prev;
                 prev = cur;
                 cur = forw;
             }
-            
+
             len -= k;
-            
-            if(h == null) {
+
+            if (h == null) {
                 h = prev;
                 t = tt;
             }
@@ -381,30 +383,31 @@ public class questions {
     }
 
     public ListNode reverseBetween(ListNode head, int left, int right) {
-        if(head == null || left == right) return head;
-        
+        if (head == null || left == right)
+            return head;
+
         int idx = 1;
         ListNode cur = head;
-        
+
         ListNode oprev = null;
-        while(idx < left) {
+        while (idx < left) {
             oprev = cur;
             cur = cur.next;
             idx++;
         }
-        
+
         ListNode prev = null;
         ListNode forw = null;
-        
-        while(idx <= right) {
+
+        while (idx <= right) {
             forw = cur.next;
             cur.next = prev;
             prev = cur;
             cur = forw;
             idx++;
         }
-        
-        if(left == 1) {
+
+        if (left == 1) {
             head.next = forw;
             return prev;
         } else {
@@ -416,84 +419,85 @@ public class questions {
     }
 
     public void unfold(ListNode head) {
-        
-        if(head == null || head.next == null || head.next.next == null) return;
-        
+
+        if (head == null || head.next == null || head.next.next == null)
+            return;
+
         ListNode cur1 = head;
         ListNode head2 = head.next;
         ListNode cur2 = head2;
-        
-        while(cur1.next != null && cur2.next != null) {
+
+        while (cur1.next != null && cur2.next != null) {
             cur1.next = cur2.next;
             cur2.next = cur1.next.next;
-            
+
             cur1 = cur1.next;
             cur2 = cur2.next;
         }
-        
+
         head2 = reverse(head2);
         cur1.next = head2;
     }
 
     public Node copyRandomList(Node head) {
-        if(head == null) {
+        if (head == null) {
             return null;
         }
-        
+
         Node cur = head;
-        while(cur != null) {
+        while (cur != null) {
             Node node = new Node(cur.val);
             node.next = cur.next;
             cur.next = node;
-            
+
             cur = cur.next.next;
         }
-        
+
         cur = head;
-        while(cur != null) {
+        while (cur != null) {
             cur.next.random = cur.random == null ? null : cur.random.next;
             cur = cur.next.next;
         }
-        
+
         Node head2 = null;
         Node tail2 = null;
-        
+
         cur = head;
-        while(cur != null) {
+        while (cur != null) {
             Node cur2 = cur.next;
             cur.next = cur.next.next;
-            
-            if(head2 == null) {
+
+            if (head2 == null) {
                 head2 = cur2;
                 tail2 = cur2;
             } else {
                 tail2.next = cur2;
                 tail2 = tail2.next;
             }
-            
+
             cur = cur.next;
         }
-        
+
         return head2;
     }
 
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(-1);
         ListNode ans = dummy;
-        
+
         int carry = 0;
-        while(carry > 0 || l1 != null || l2 != null) {
+        while (carry > 0 || l1 != null || l2 != null) {
             int sum = carry + (l1 == null ? 0 : l1.val) + (l2 == null ? 0 : l2.val);
             int toAdd = sum % 10;
             carry = sum / 10;
             ListNode addNode = new ListNode(toAdd);
             ans.next = addNode;
             ans = ans.next;
-            
-            l1 = l1 == null ? null :  l1.next;
+
+            l1 = l1 == null ? null : l1.next;
             l2 = l2 == null ? null : l2.next;
         }
-        
+
         return dummy.next;
     }
 
@@ -501,41 +505,142 @@ public class questions {
         ListNode dummy = new ListNode(-1);
         ListNode ansItr = dummy;
         int carry = 0;
-        
-        while(l1 != null || carry > 0) {
+
+        while (l1 != null || carry > 0) {
             int mul = ((l1 == null ? 0 : l1.val) * digit) + carry;
             int toAdd = mul % 10;
             carry = mul / 10;
-            
+
             ansItr.next = new ListNode(toAdd);
             ansItr = ansItr.next;
-            
+
             l1 = l1 == null ? null : l1.next;
         }
-        
+
         return dummy.next;
     }
 
     public ListNode multiplyTwoLL(ListNode l1, ListNode l2) {
-        if(l1 == null) return l2;
-        if(l2 == null) return l1;
-        
+        if (l1 == null)
+            return l2;
+        if (l2 == null)
+            return l1;
+
         ListNode dummy = new ListNode(-1);
         ListNode ansItr = dummy;
-        
+
         l1 = reverse(l1);
         l2 = reverse(l2);
-        
-        while(l2 != null) {
+
+        while (l2 != null) {
             ListNode mul = multiplyWithOneDigit(l1, l2.val);
             ansItr.next = addTwoNumbers(ansItr.next, mul);
-            
+
             ansItr = ansItr.next;
             l2 = l2.next;
         }
-        
+
         return reverse(dummy.next);
     }
 
-    
+    public int length(Node head) {
+        int count = 0;
+        while (head != null) {
+            head = head.next;
+            count++;
+        }
+        return count;
+    }
+
+    public Node reverse(Node head) {
+        Node prev = null;
+        Node cur = head;
+        Node forw = null;
+
+        while(cur != null) {
+            forw = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = forw;
+        }
+        
+        return prev;
+    }
+
+    public Node subLinkedList(Node l1, Node l2) {
+        // remove leading zeroes in lists
+        while (l1 != null && l1.next != null && l1.data == 0)
+            l1 = l1.next;
+        while (l2 != null && l2.next != null && l2.data == 0)
+            l2 = l2.next;
+
+        // find lengths of lists
+        int len1 = length(l1);
+        int len2 = length(l2);
+
+        if (len1 < len2) {
+            Node temp = l1;
+            l1 = l2;
+            l2 = temp;
+        }
+
+        if (len1 == len2) {
+            Node c1 = l1;
+            Node c2 = l2;
+
+            // if lengths are equal, travel and swap if l2 > l1
+            while (c1 != null) {
+                if (c1.data < c2.data) {
+                    Node temp = l1;
+                    l1 = l2;
+                    l2 = temp;
+                    break;
+                } else if (c1.data > c2.data) {
+                    break;
+                } else {
+                    c1 = c1.next;
+                    c2 = c2.next;
+                }
+            }
+        }
+
+        if (l1 == null)
+            return l2;
+        if (l2 == null)
+            return l1;
+
+        l1 = reverse(l1);
+        l2 = reverse(l2);
+
+        Node dummy = new Node(-1);
+        Node ansItr = dummy;
+
+        int borrow = 0;
+        while (l1 != null) {
+            int diff = l1.data - (l2 == null ? 0 : l2.data) + borrow;
+
+            if (diff < 0) {
+                borrow = -1;
+                diff += 10;
+            } else {
+                borrow = 0;
+            }
+
+            ansItr.next = new Node(diff);
+            ansItr = ansItr.next;
+
+            l1 = l1.next;
+            l2 = l2 == null ? null : l2.next;
+        }
+
+        Node nhead = reverse(dummy.next);
+
+        // remove leading zeroes from ans (except for last zero if all are zeroes)
+        while (nhead != null && nhead.next != null && nhead.data == 0) {
+            nhead = nhead.next;
+        }
+
+        return nhead;
+    }
+
 }
