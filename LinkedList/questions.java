@@ -557,13 +557,13 @@ public class questions {
         Node cur = head;
         Node forw = null;
 
-        while(cur != null) {
+        while (cur != null) {
             forw = cur.next;
             cur.next = prev;
             prev = cur;
             cur = forw;
         }
-        
+
         return prev;
     }
 
@@ -642,5 +642,160 @@ public class questions {
 
         return nhead;
     }
+
+    public ListNode segregateOnLastIndex(ListNode head) {
+
+        if (head == null)
+            return null;
+
+        ListNode last = head;
+        while (last.next != null) {
+            last = last.next;
+        }
+
+        ListNode smallerThanLast = new ListNode(-1);
+        ListNode si = smallerThanLast;
+        ListNode greaterThanLast = new ListNode(-1);
+        ListNode gi = greaterThanLast;
+
+        ListNode cur = head;
+
+        while (cur != null) {
+            if (cur.val <= last.val) {
+                si.next = cur;
+                si = si.next;
+            } else {
+                gi.next = cur;
+                gi = gi.next;
+            }
+            ListNode forw = cur.next;
+            cur.next = null;
+            cur = forw;
+        }
+
+        si.next = greaterThanLast.next;
+
+        return smallerThanLast.next;
+    }
+
+    public ListNode segregate(ListNode head, int idx) {
+        if (head == null || head.next == null)
+            return head;
+
+        ListNode pivot = head;
+        while (idx-- > 0) {
+            pivot = pivot.next;
+        }
+
+        ListNode smallerThanLast = new ListNode(-1);
+        ListNode si = smallerThanLast;
+        ListNode greaterThanLast = new ListNode(-1);
+        ListNode gi = greaterThanLast;
+
+        ListNode cur = head;
+
+        while (cur != null) {
+            if (cur != pivot) {
+                if (cur.val <= pivot.val) {
+                    si.next = cur;
+                    si = si.next;
+                } else {
+                    gi.next = cur;
+                    gi = gi.next;
+                }
+            }
+
+            ListNode forw = cur.next;
+            cur.next = null;
+            cur = forw;
+        }
+
+        si.next = pivot;
+        pivot.next = greaterThanLast.next;
+
+        return smallerThanLast.next;
+    }
+
+
+    // -------------------------------------
+    //   QUICK SORT ------------------------
+    //  ---------------------------------------
+
+    public Node[] segregate(Node head) {
+        if (head == null || head.next == null)
+            return new Node[] { null, head, null };
+
+        Node sLL = new Node(-1);
+        Node gLL = new Node(-1);
+
+        Node si = sLL;
+        Node gi = gLL;
+
+        Node pivot = head;
+        while (pivot.next != null)
+            pivot = pivot.next;
+
+        Node cur = head;
+        while (cur != null) {
+            if (cur != pivot) {
+                if (cur.data <= pivot.data) {
+                    si.next = cur;
+                    si = si.next;
+                } else {
+                    gi.next = cur;
+                    gi = gi.next;
+                }
+            }
+
+            Node forw = cur.next;
+            cur.next = null;
+            cur = forw;
+        }
+
+        return new Node[] { sLL.next, pivot, gLL.next };
+    }
+
+    public Node[] joinLists(Node[] left, Node pivot, Node[] right) {
+        Node head, tail;
+
+        if (left[0] == null && right[0] == null) {
+            head = pivot;
+            tail = pivot;
+        } else if (left[0] == null) {
+            head = pivot;
+            head.next = right[0];
+            tail = right[1];
+        } else if (right[0] == null) {
+            head = left[0];
+            left[1].next = pivot;
+            tail = pivot;
+        } else {
+            head = left[0];
+            left[1].next = pivot;
+            pivot.next = right[0];
+            tail = right[1];
+        }
+
+        return new Node[] { head, tail };
+    }
+
+    public Node[] quickSort_(Node node) {
+        if (node == null)
+            return new Node[2];
+
+        Node nodes[] = segregate(node);
+        Node[] left = quickSort_(nodes[0]);
+        Node[] right = quickSort_(nodes[2]);
+
+        return joinLists(left, nodes[1], right);
+    }
+
+    public Node quickSort(Node node) {
+        return quickSort_(node)[0];
+    }
+
+    // QUICK SORT END --------------------------------
+
+    
 
 }
