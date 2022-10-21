@@ -125,7 +125,7 @@ public class BST {
 
         // System.out.println(find_01(root, 45));
 
-        // System.out.println(find_02(root, 45));
+        System.out.println(find_02(root, 45));
 
         // root = addNode(root, 45);
 
